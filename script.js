@@ -293,3 +293,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
     console.log("Malungelo Properties — Website Loaded ✓");
 });
+// ===============================
+// EMAILJS AUTO REPLY
+// ===============================
+
+const applicationForm = document.querySelector(".application-form");
+
+if (applicationForm) {
+
+    applicationForm.addEventListener("submit", function () {
+
+        emailjs.send("service_b0y6eai", "template_4mczepm", {
+
+            first_name: document.getElementById("firstName").value,
+
+            email: document.getElementById("email").value,
+
+        }).then(function () {
+
+            console.log("Confirmation email sent.");
+
+        }).catch(function (error) {
+
+            console.log("EmailJS Error:", error);
+
+        });
+
+    });
+
+}
