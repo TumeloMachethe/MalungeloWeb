@@ -70,13 +70,15 @@
 
             <div class="form-group">
                 <label for="firstName">First Name</label>
-                <input type="text" id="firstName" name="First Name" placeholder="e.g. Tumelo" required>
+                <input type="text" id="firstName" name="First Name" placeholder="e.g. Tumelo"
+                       pattern="[A-Za-z\s'-]+" title="First name should only contain letters" required>
                 <span class="error-message"></span>
             </div>
 
             <div class="form-group">
                 <label for="surname">Surname</label>
-                <input type="text" id="surname" name="Surname" placeholder="e.g. Machethe" required>
+                <input type="text" id="surname" name="Surname" placeholder="e.g. Machethe"
+                       pattern="[A-Za-z\s'-]+" title="Surname should only contain letters" required>
                 <span class="error-message"></span>
             </div>
 
@@ -159,7 +161,8 @@
 
             <div class="form-group">
                 <label for="emergencyName">Emergency Contact Name</label>
-                <input type="text" id="emergencyName" name="Emergency Contact Name" placeholder="Full name" required>
+                <input type="text" id="emergencyName" name="Emergency Contact Name" placeholder="Full name"
+                       pattern="[A-Za-z\s'-]+" title="Name should only contain letters" required>
                 <span class="error-message"></span>
             </div>
 
@@ -224,7 +227,5 @@ emailjs.init({
 
 <script src="script.js"></script>
 
-    
-</script>
 </body>
 </html>

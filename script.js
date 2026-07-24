@@ -293,18 +293,64 @@ document.addEventListener("DOMContentLoaded", () => {
 
     console.log("Malungelo Properties — Website Loaded ✓");
 });
-// ===============================
-// EMAILJS AUTO REPLY
-// ===============================
+
+// =========================================
+// APPLICATION FORM — VALIDATION + EMAILJS
+// =========================================
 
 const applicationForm = document.querySelector(".application-form");
 
 if (applicationForm) {
 
+    const formFields = applicationForm.querySelectorAll("input, select, textarea");
+
+    // Live validation as the user types/leaves a field
+    formFields.forEach((field) => {
+        field.addEventListener("input", () => validateField(field));
+        field.addEventListener("blur", () => validateField(field));
+    });
+
+    function validateField(field) {
+        const errorSpan = field.parentElement.querySelector(".error-message");
+        if (!errorSpan) return true;
+
+        if (!field.checkValidity()) {
+            errorSpan.textContent = field.validationMessage;
+            field.classList.add("invalid");
+            return false;
+        } else {
+            errorSpan.textContent = "";
+            field.classList.remove("invalid");
+            return true;
+        }
+    }
+
+    function validateAllFields() {
+        let allValid = true;
+        formFields.forEach((field) => {
+            if (!validateField(field)) {
+                allValid = false;
+            }
+        });
+        return allValid;
+    }
+
     applicationForm.addEventListener("submit", function (e) {
 
+        // Always prevent the default submit first — we control it manually below
         e.preventDefault();
 
+        // Run validation. If anything fails, stop here and show the errors.
+        if (!validateAllFields()) {
+            const firstInvalid = applicationForm.querySelector(".invalid");
+            if (firstInvalid) {
+                firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
+                firstInvalid.focus();
+            }
+            return;
+        }
+
+        // Validation passed — send the auto-reply email, then submit the form
         emailjs.send(
             "service_b0y6eai",
             "template_4mczepm",
@@ -314,15 +360,11 @@ if (applicationForm) {
             }
         )
         .then(function () {
-
             applicationForm.submit();
-
         })
         .catch(function (error) {
-
             console.log(error);
             applicationForm.submit();
-
         });
 
     });
