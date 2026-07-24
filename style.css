@@ -1943,8 +1943,22 @@ body.light-mode .hero-eyebrow {
     box-shadow: 0 0 0 3px rgba(229, 115, 115, 0.15) !important;
 }
 
+/* Fields flagged invalid by our custom JS validation (script.js adds/removes
+   this class on input/blur/submit). Previously .error-message was forced to
+   display:none, which hid every validation message — fixed below. */
+.form-group input.invalid,
+.form-group select.invalid,
+.form-group textarea.invalid {
+    border-color: #e57373 !important;
+    box-shadow: 0 0 0 3px rgba(229, 115, 115, 0.15) !important;
+}
+
 .form-group .error-message {
-    display: none;
+    display: block;
+    min-height: 16px;
+    font-size: 13px;
+    color: #e57373;
+    margin-top: 2px;
 }
 
 .form-checkbox {
