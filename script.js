@@ -301,21 +301,27 @@ const applicationForm = document.querySelector(".application-form");
 
 if (applicationForm) {
 
-    applicationForm.addEventListener("submit", function () {
+    applicationForm.addEventListener("submit", function (e) {
 
-        emailjs.send("service_b0y6eai", "template_4mczepm", {
+        e.preventDefault();
 
-            first_name: document.getElementById("firstName").value,
+        emailjs.send(
+            "service_b0y6eai",
+            "template_4mczepm",
+            {
+                first_name: document.getElementById("firstName").value,
+                email: document.getElementById("email").value
+            }
+        )
+        .then(function () {
 
-            email: document.getElementById("email").value,
+            applicationForm.submit();
 
-        }).then(function () {
+        })
+        .catch(function (error) {
 
-            console.log("Confirmation email sent.");
-
-        }).catch(function (error) {
-
-            console.log("EmailJS Error:", error);
+            console.log(error);
+            applicationForm.submit();
 
         });
 

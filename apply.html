@@ -215,12 +215,14 @@
 </button>
 <div id="cursor-glow" aria-hidden="true"></div>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script src="script.js"> (function () {
-    emailjs.init({
-        publicKey: "kIsfZJzpsvj5QP95o",
-    });
-})();</script>
+
 <script>
+emailjs.init({
+    publicKey: "kIsfZJzpsvj5QP95o"
+});
+</script>
+
+<script src="script.js"></script>
     // Basic client-side validation feedback so users can't submit an empty/invalid form.
     // Native HTML5 "required" + "pattern" attributes already block submission;
     // this just adds a friendly shake + highlight instead of the default browser popover only.
