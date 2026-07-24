@@ -223,48 +223,8 @@ emailjs.init({
 </script>
 
 <script src="script.js"></script>
-    // Basic client-side validation feedback so users can't submit an empty/invalid form.
-    // Native HTML5 "required" + "pattern" attributes already block submission;
-    // this just adds a friendly shake + highlight instead of the default browser popover only.
-    (function () {
-        const form = document.querySelector('.application-form');
-        if (!form) return;
 
-        form.addEventListener('submit', function (e) {
-            let firstInvalid = null;
-
-            form.querySelectorAll('.form-group').forEach(function (group) {
-                const field = group.querySelector('input, select, textarea');
-                if (!field) return;
-                if (!field.checkValidity()) {
-                    group.classList.add('error');
-                    if (!firstInvalid) firstInvalid = field;
-                } else {
-                    group.classList.remove('error');
-                }
-            });
-
-            const checkbox = document.getElementById('confirm');
-            if (checkbox && !checkbox.checkValidity()) {
-                if (!firstInvalid) firstInvalid = checkbox;
-            }
-
-            if (firstInvalid) {
-                e.preventDefault();
-                firstInvalid.focus();
-                firstInvalid.reportValidity();
-            }
-        });
-
-        form.querySelectorAll('input, select, textarea').forEach(function (field) {
-            field.addEventListener('input', function () {
-                const group = field.closest('.form-group');
-                if (group && field.checkValidity()) {
-                    group.classList.remove('error');
-                }
-            });
-        });
-    })();
+    
 </script>
 </body>
 </html>
