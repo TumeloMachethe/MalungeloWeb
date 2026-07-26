@@ -104,7 +104,8 @@ a {
 .about-management h2,
 .support-section h2,
 .follow-us h2,
-.reviews-section h2 {
+.reviews-section h2,
+.people-section h2 {
     background: var(--gold-gradient);
     -webkit-background-clip: text;
     background-clip: text;
@@ -848,6 +849,373 @@ button:hover {
 
 .sub-gallery .gallery-container {
     justify-content: center;
+}
+
+/* Give sub-gallery photos a bit more presence + a clear "zoomable" affordance */
+.sub-gallery .gallery-container img {
+    width: 340px;
+    height: 240px;
+    cursor: zoom-in;
+    position: relative;
+}
+
+.sub-gallery .gallery-container {
+    position: relative;
+}
+
+.gallery-container {
+    position: relative;
+}
+
+.gallery-container img {
+    cursor: zoom-in;
+}
+
+/* Small magnifying-glass hint that appears on hover */
+.gallery-zoom-hint {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+/* =========================================
+   LIGHTBOX / IMAGE ZOOM VIEWER
+   ========================================= */
+.lightbox-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 12, 20, 0.94);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+
+.lightbox-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.lightbox-stage {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    touch-action: none;
+}
+
+.lightbox-stage img {
+    max-width: 88vw;
+    max-height: 82vh;
+    width: auto;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    user-select: none;
+    -webkit-user-drag: none;
+    transform-origin: center center;
+    transition: transform 0.15s ease-out;
+    will-change: transform;
+}
+
+.lightbox-stage.zoomed img {
+    cursor: grab;
+    transition: none;
+}
+
+.lightbox-stage.dragging img {
+    cursor: grabbing;
+}
+
+.lightbox-controls {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(22, 32, 51, 0.85);
+    border: 1px solid rgba(212,164,55,0.25);
+    padding: 10px 14px;
+    border-radius: 100px;
+    backdrop-filter: blur(10px);
+    z-index: 2;
+}
+
+.lightbox-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--gold);
+    border: 1px solid rgba(212,164,55,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    cursor: pointer;
+    padding: 0;
+    transition: var(--transition);
+}
+
+.lightbox-btn:hover {
+    background: var(--gold-gradient);
+    color: var(--darkest);
+    transform: scale(1.08);
+    box-shadow: none;
+}
+
+.lightbox-zoom-level {
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 600;
+    min-width: 46px;
+    text-align: center;
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: rgba(22, 32, 51, 0.85);
+    color: var(--white);
+    border: 1px solid rgba(212,164,55,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 2;
+    transition: var(--transition);
+}
+
+.lightbox-close:hover {
+    background: var(--gold-gradient);
+    color: var(--darkest);
+    transform: rotate(90deg);
+}
+
+.lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: rgba(22, 32, 51, 0.75);
+    color: var(--white);
+    border: 1px solid rgba(212,164,55,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 2;
+    transition: var(--transition);
+}
+
+.lightbox-nav:hover {
+    background: var(--gold-gradient);
+    color: var(--darkest);
+}
+
+.lightbox-nav.prev { left: 24px; }
+.lightbox-nav.next { right: 24px; }
+
+.lightbox-counter {
+    position: absolute;
+    top: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255,255,255,0.75);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    background: rgba(22, 32, 51, 0.7);
+    padding: 6px 16px;
+    border-radius: 100px;
+    border: 1px solid rgba(212,164,55,0.2);
+    z-index: 2;
+}
+
+.lightbox-hint {
+    position: absolute;
+    bottom: 82px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255,255,255,0.45);
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    z-index: 2;
+    pointer-events: none;
+}
+
+@media (max-width: 768px) {
+    .lightbox-nav { width: 42px; height: 42px; font-size: 15px; }
+    .lightbox-nav.prev { left: 10px; }
+    .lightbox-nav.next { right: 10px; }
+    .lightbox-close { top: 14px; right: 14px; width: 40px; height: 40px; }
+    .lightbox-counter { top: 16px; }
+    .lightbox-hint { display: none; }
+    .lightbox-controls { bottom: 16px; padding: 8px 12px; }
+    .lightbox-btn { width: 36px; height: 36px; font-size: 13px; }
+}
+
+/* =========================================
+   MEET THE STUDENTS SLIDESHOW
+   ========================================= */
+.people-section {
+    padding: 80px 8%;
+    text-align: center;
+}
+
+.people-subtitle {
+    color: var(--text-muted);
+    font-size: 16px;
+    max-width: 500px;
+    margin: -12px auto 50px;
+}
+
+.people-slider {
+    position: relative;
+    max-width: 420px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+}
+
+.people-slides {
+    position: relative;
+    width: 340px;
+    height: 420px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow), var(--shadow-gold);
+    border: 2px solid rgba(212,164,55,0.25);
+}
+
+.people-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transform: scale(1.03);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+    pointer-events: none;
+}
+
+.people-slide.active {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+}
+
+.people-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.people-caption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 28px 20px 22px;
+    background: linear-gradient(to top, rgba(10,16,28,0.92) 10%, rgba(10,16,28,0) 100%);
+    text-align: center;
+}
+
+.people-caption h3 {
+    color: var(--white);
+    font-size: 24px;
+    position: relative;
+    display: inline-block;
+    padding-bottom: 10px;
+}
+
+.people-caption h3::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 2px;
+    background: var(--gold-gradient);
+    border-radius: 2px;
+}
+
+.people-arrow {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: var(--darker);
+    color: var(--gold);
+    border: 1px solid rgba(212,164,55,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: 0;
+    transition: var(--transition);
+}
+
+.people-arrow:hover {
+    background: var(--gold-gradient);
+    color: var(--darkest);
+    transform: scale(1.08);
+}
+
+.people-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 26px;
+}
+
+.people-dots .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.people-dots .dot.active {
+    background: var(--gold);
+    width: 24px;
+    border-radius: 100px;
+}
+
+body.light-mode .people-section {
+    background: var(--off-white);
+}
+
+@media (max-width: 500px) {
+    .people-slides { width: 260px; height: 340px; }
+    .people-arrow { width: 38px; height: 38px; font-size: 14px; }
 }
 
 /* =========================================
@@ -1943,9 +2311,6 @@ body.light-mode .hero-eyebrow {
     box-shadow: 0 0 0 3px rgba(229, 115, 115, 0.15) !important;
 }
 
-/* Fields flagged invalid by our custom JS validation (script.js adds/removes
-   this class on input/blur/submit). Previously .error-message was forced to
-   display:none, which hid every validation message — fixed below. */
 .form-group input.invalid,
 .form-group select.invalid,
 .form-group textarea.invalid {

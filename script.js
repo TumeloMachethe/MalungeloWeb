@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }, { threshold: 0.1 });
 
-    document.querySelectorAll(".feature-box, .property-card, .gallery-container img, .gallery-item, .stat-box, .support-card, .manager, .about-box, .contact-item, .property-amenities, .property-price-row, .reviews-section").forEach(el => {
+    document.querySelectorAll(".feature-box, .property-card, .gallery-container img, .gallery-item, .stat-box, .support-card, .manager, .about-box, .contact-item, .property-amenities, .property-price-row, .reviews-section, .people-slider").forEach(el => {
         el.style.opacity = "0";
         el.style.transform = "translateY(32px)";
         el.style.transition = "opacity 0.6s ease, transform 0.6s ease";
@@ -123,6 +123,279 @@ document.addEventListener("DOMContentLoaded", () => {
 
         setInterval(nextSlide, 4500);
     }
+
+    // ── MEET THE STUDENTS SLIDESHOW ───────
+    const peopleSlides = document.querySelectorAll(".people-slide");
+    const peopleDotsContainer = document.getElementById("people-dots");
+    const peoplePrevBtn = document.getElementById("people-prev");
+    const peopleNextBtn = document.getElementById("people-next");
+
+    if (peopleSlides.length > 0) {
+        let peopleCurrent = 0;
+        let peopleTimer;
+
+        if (peopleDotsContainer) {
+            peopleSlides.forEach((_, i) => {
+                const dot = document.createElement("div");
+                dot.classList.add("dot");
+                if (i === 0) dot.classList.add("active");
+                dot.addEventListener("click", () => {
+                    goToPeopleSlide(i);
+                    resetPeopleTimer();
+                });
+                peopleDotsContainer.appendChild(dot);
+            });
+        }
+
+        function goToPeopleSlide(index) {
+            peopleSlides[peopleCurrent].classList.remove("active");
+            if (peopleDotsContainer) peopleDotsContainer.children[peopleCurrent].classList.remove("active");
+            peopleCurrent = (index + peopleSlides.length) % peopleSlides.length;
+            peopleSlides[peopleCurrent].classList.add("active");
+            if (peopleDotsContainer) peopleDotsContainer.children[peopleCurrent].classList.add("active");
+        }
+
+        function resetPeopleTimer() {
+            clearInterval(peopleTimer);
+            peopleTimer = setInterval(() => goToPeopleSlide(peopleCurrent + 1), 4000);
+        }
+
+        if (peoplePrevBtn) {
+            peoplePrevBtn.addEventListener("click", () => {
+                goToPeopleSlide(peopleCurrent - 1);
+                resetPeopleTimer();
+            });
+        }
+
+        if (peopleNextBtn) {
+            peopleNextBtn.addEventListener("click", () => {
+                goToPeopleSlide(peopleCurrent + 1);
+                resetPeopleTimer();
+            });
+        }
+
+        resetPeopleTimer();
+    }
+
+    // ── IMAGE LIGHTBOX / ZOOM VIEWER ──────
+    (function setupLightbox() {
+        // Group images by their containing gallery so prev/next stays within that set
+        const galleries = document.querySelectorAll(".gallery-container");
+        if (!galleries.length) return;
+
+        let currentImages = [];
+        let currentIndex = 0;
+        let scale = 1;
+        let originX = 0, originY = 0;
+        let isDragging = false;
+        let dragStartX = 0, dragStartY = 0;
+        let startOriginX = 0, startOriginY = 0;
+
+        const MIN_SCALE = 1;
+        const MAX_SCALE = 4;
+
+        // Build overlay markup once
+        const overlay = document.createElement("div");
+        overlay.className = "lightbox-overlay";
+        overlay.innerHTML = `
+            <div class="lightbox-counter" id="lb-counter"></div>
+            <button class="lightbox-close" id="lb-close" aria-label="Close"><i class="fas fa-times"></i></button>
+            <button class="lightbox-nav prev" id="lb-prev" aria-label="Previous image"><i class="fas fa-chevron-left"></i></button>
+            <div class="lightbox-stage" id="lb-stage">
+                <img id="lb-image" src="" alt="">
+            </div>
+            <button class="lightbox-nav next" id="lb-next" aria-label="Next image"><i class="fas fa-chevron-right"></i></button>
+            <div class="lightbox-hint">Scroll or pinch to zoom · drag to pan</div>
+            <div class="lightbox-controls">
+                <button class="lightbox-btn" id="lb-zoom-out" aria-label="Zoom out"><i class="fas fa-minus"></i></button>
+                <span class="lightbox-zoom-level" id="lb-zoom-level">100%</span>
+                <button class="lightbox-btn" id="lb-zoom-in" aria-label="Zoom in"><i class="fas fa-plus"></i></button>
+                <button class="lightbox-btn" id="lb-reset" aria-label="Reset zoom"><i class="fas fa-compress"></i></button>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+
+        const stage = overlay.querySelector("#lb-stage");
+        const imgEl = overlay.querySelector("#lb-image");
+        const counterEl = overlay.querySelector("#lb-counter");
+        const zoomLevelEl = overlay.querySelector("#lb-zoom-level");
+
+        function applyTransform() {
+            imgEl.style.transform = `translate(${originX}px, ${originY}px) scale(${scale})`;
+            stage.classList.toggle("zoomed", scale > 1);
+            zoomLevelEl.textContent = Math.round(scale * 100) + "%";
+        }
+
+        function resetZoom() {
+            scale = 1;
+            originX = 0;
+            originY = 0;
+            applyTransform();
+        }
+
+        function clampPan() {
+            // Simple clamp so the image can't be dragged wildly off-stage
+            const maxOffset = (scale - 1) * 260;
+            originX = Math.max(-maxOffset, Math.min(maxOffset, originX));
+            originY = Math.max(-maxOffset, Math.min(maxOffset, originY));
+        }
+
+        function loadImage(index) {
+            currentIndex = (index + currentImages.length) % currentImages.length;
+            const target = currentImages[currentIndex];
+            imgEl.src = target.src;
+            imgEl.alt = target.alt || "";
+            counterEl.textContent = `${currentIndex + 1} / ${currentImages.length}`;
+            resetZoom();
+        }
+
+        function openLightbox(images, startIndex) {
+            currentImages = images;
+            loadImage(startIndex);
+            overlay.classList.add("active");
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeLightbox() {
+            overlay.classList.remove("active");
+            document.body.style.overflow = "";
+            resetZoom();
+        }
+
+        // Wire up every gallery's images
+        galleries.forEach((gallery) => {
+            const images = Array.from(gallery.querySelectorAll("img"));
+            images.forEach((img, idx) => {
+                img.addEventListener("click", () => openLightbox(images, idx));
+            });
+        });
+
+        overlay.querySelector("#lb-close").addEventListener("click", closeLightbox);
+        overlay.addEventListener("click", (e) => {
+            if (e.target === overlay) closeLightbox();
+        });
+
+        overlay.querySelector("#lb-prev").addEventListener("click", () => loadImage(currentIndex - 1));
+        overlay.querySelector("#lb-next").addEventListener("click", () => loadImage(currentIndex + 1));
+
+        overlay.querySelector("#lb-zoom-in").addEventListener("click", () => {
+            scale = Math.min(MAX_SCALE, scale + 0.5);
+            clampPan();
+            applyTransform();
+        });
+        overlay.querySelector("#lb-zoom-out").addEventListener("click", () => {
+            scale = Math.max(MIN_SCALE, scale - 0.5);
+            if (scale === 1) { originX = 0; originY = 0; }
+            clampPan();
+            applyTransform();
+        });
+        overlay.querySelector("#lb-reset").addEventListener("click", resetZoom);
+
+        // Scroll wheel to zoom, centered roughly on cursor
+        stage.addEventListener("wheel", (e) => {
+            if (!overlay.classList.contains("active")) return;
+            e.preventDefault();
+            const delta = e.deltaY < 0 ? 0.25 : -0.25;
+            scale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale + delta));
+            if (scale === 1) { originX = 0; originY = 0; }
+            clampPan();
+            applyTransform();
+        }, { passive: false });
+
+        // Double click / double tap to toggle zoom
+        imgEl.addEventListener("dblclick", () => {
+            if (scale > 1) {
+                resetZoom();
+            } else {
+                scale = 2.5;
+                applyTransform();
+            }
+        });
+
+        // Drag to pan when zoomed in (mouse)
+        stage.addEventListener("mousedown", (e) => {
+            if (scale <= 1) return;
+            isDragging = true;
+            stage.classList.add("dragging");
+            dragStartX = e.clientX;
+            dragStartY = e.clientY;
+            startOriginX = originX;
+            startOriginY = originY;
+        });
+        window.addEventListener("mousemove", (e) => {
+            if (!isDragging) return;
+            originX = startOriginX + (e.clientX - dragStartX);
+            originY = startOriginY + (e.clientY - dragStartY);
+            clampPan();
+            applyTransform();
+        });
+        window.addEventListener("mouseup", () => {
+            isDragging = false;
+            stage.classList.remove("dragging");
+        });
+
+        // Touch support: single-finger pan when zoomed, pinch to zoom
+        let pinchStartDist = null;
+        let pinchStartScale = 1;
+
+        function touchDist(touches) {
+            const dx = touches[0].clientX - touches[1].clientX;
+            const dy = touches[0].clientY - touches[1].clientY;
+            return Math.hypot(dx, dy);
+        }
+
+        stage.addEventListener("touchstart", (e) => {
+            if (e.touches.length === 2) {
+                pinchStartDist = touchDist(e.touches);
+                pinchStartScale = scale;
+            } else if (e.touches.length === 1 && scale > 1) {
+                isDragging = true;
+                dragStartX = e.touches[0].clientX;
+                dragStartY = e.touches[0].clientY;
+                startOriginX = originX;
+                startOriginY = originY;
+            }
+        }, { passive: true });
+
+        stage.addEventListener("touchmove", (e) => {
+            if (e.touches.length === 2 && pinchStartDist) {
+                e.preventDefault();
+                const newDist = touchDist(e.touches);
+                scale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, pinchStartScale * (newDist / pinchStartDist)));
+                clampPan();
+                applyTransform();
+            } else if (e.touches.length === 1 && isDragging) {
+                originX = startOriginX + (e.touches[0].clientX - dragStartX);
+                originY = startOriginY + (e.touches[0].clientY - dragStartY);
+                clampPan();
+                applyTransform();
+            }
+        }, { passive: false });
+
+        stage.addEventListener("touchend", () => {
+            isDragging = false;
+            pinchStartDist = null;
+        });
+
+        // Keyboard controls
+        document.addEventListener("keydown", (e) => {
+            if (!overlay.classList.contains("active")) return;
+            if (e.key === "Escape") closeLightbox();
+            if (e.key === "ArrowLeft") loadImage(currentIndex - 1);
+            if (e.key === "ArrowRight") loadImage(currentIndex + 1);
+            if (e.key === "+" || e.key === "=") {
+                scale = Math.min(MAX_SCALE, scale + 0.5);
+                clampPan();
+                applyTransform();
+            }
+            if (e.key === "-" || e.key === "_") {
+                scale = Math.max(MIN_SCALE, scale - 0.5);
+                if (scale === 1) { originX = 0; originY = 0; }
+                clampPan();
+                applyTransform();
+            }
+        });
+    })();
 
     // ── REDUCED MOTION CHECK ──────────────
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
