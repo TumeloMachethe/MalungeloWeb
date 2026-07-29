@@ -1164,6 +1164,16 @@ button:hover {
     border-radius: 2px;
 }
 
+.people-role {
+    display: block;
+    margin-top: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--gold);
+}
+
 .people-arrow {
     width: 46px;
     height: 46px;
@@ -1717,6 +1727,12 @@ body.light-mode .review-author-info h4 {
     background-position: center;
 }
 
+.westbourne-house .subpage-hero {
+    background-image: url("property3.jpeg");
+    background-size: cover;
+    background-position: center;
+}
+
 .subpage-overlay {
     position: absolute;
     inset: 0;
@@ -1948,6 +1964,12 @@ body.light-mode.western-house .subpage-hero {
 
 body.light-mode.new-property .subpage-hero {
     background-image: url("property2.jpg") !important;
+    background-size: cover !important;
+    background-position: center !important;
+}
+
+body.light-mode.westbourne-house .subpage-hero {
+    background-image: url("property3.jpeg") !important;
     background-size: cover !important;
     background-position: center !important;
 }

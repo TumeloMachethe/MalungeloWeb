@@ -125,10 +125,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ── MEET THE STUDENTS SLIDESHOW ───────
+    // Slide order: 0 = Palesa Tumane (Property Manager), 1 = Lisa Matu, 2 = Misokuhle Sogiba.
+    // The manager's slide (index 0) is always what plays first — both on page load
+    // and every time the visitor scrolls this section into view.
     const peopleSlides = document.querySelectorAll(".people-slide");
     const peopleDotsContainer = document.getElementById("people-dots");
     const peoplePrevBtn = document.getElementById("people-prev");
     const peopleNextBtn = document.getElementById("people-next");
+    const peopleSection = document.getElementById("meet-students");
 
     if (peopleSlides.length > 0) {
         let peopleCurrent = 0;
@@ -175,6 +179,21 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         resetPeopleTimer();
+
+        // Every time the section scrolls into view, jump back to the manager's
+        // slide (index 0) and restart the auto-play timer from there.
+        if (peopleSection) {
+            const peopleSectionObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        goToPeopleSlide(0);
+                        resetPeopleTimer();
+                    }
+                });
+            }, { threshold: 0.4 });
+
+            peopleSectionObserver.observe(peopleSection);
+        }
     }
 
     // ── IMAGE LIGHTBOX / ZOOM VIEWER ──────
@@ -568,7 +587,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // =========================================
-// APPLICATION FORM — VALIDATION + EMAILJS
+// APPLICATION FORM — VALIDATION + FORMSUBMIT
 // =========================================
 
 const applicationForm = document.querySelector(".application-form");
@@ -623,22 +642,8 @@ if (applicationForm) {
             return;
         }
 
-        // Validation passed — send the auto-reply email, then submit the form
-        emailjs.send(
-            "service_b0y6eai",
-            "template_4mczepm",
-            {
-                first_name: document.getElementById("firstName").value,
-                email: document.getElementById("email").value
-            }
-        )
-        .then(function () {
-            applicationForm.submit();
-        })
-        .catch(function (error) {
-            console.log(error);
-            applicationForm.submit();
-        });
+        // Validation passed — submit straight to FormSubmit, no EmailJS involved.
+        applicationForm.submit();
 
     });
 
