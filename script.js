@@ -587,12 +587,16 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // =========================================
-// APPLICATION FORM — VALIDATION + FORMSUBMIT
+// APPLICATION FORM — VALIDATION + FORMSUBMIT + ZAPIER TRACKER
 // =========================================
 
 const applicationForm = document.querySelector(".application-form");
 
 if (applicationForm) {
+
+    // Make.com webhook — receives the full application and pushes it into
+    // the Excel Online "ApplicationsTable" via the connected scenario.
+    const MAKE_WEBHOOK_URL = "https://hook.eu1.make.com/7kaaarv1zlnxla6b7a3ll790ctsvazyf";
 
     const formFields = applicationForm.querySelectorAll("input, select, textarea");
 
@@ -627,6 +631,43 @@ if (applicationForm) {
         return allValid;
     }
 
+    // Grabs EVERY field currently on the form by its "name" attribute and
+    // turns it into a plain JSON object. This is dynamic — if fields are
+    // ever added, removed, or renamed on the form, this automatically
+    // picks up the change with zero edits needed here. (Just remember: if
+    // you add a brand-new field later, you'll still need to map it to a
+    // column inside your Zapier step — this only handles the "sending" side.)
+    function collectAllFormDataAsJSON(form) {
+        const data = {};
+        new FormData(form).forEach((value, key) => {
+            data[key] = value;
+        });
+        // Add a server-side-friendly timestamp so Zapier/Excel has a
+        // reliable "Date Received" value without relying on the browser clock.
+        data["Submitted At"] = new Date().toISOString();
+        return data;
+    }
+
+    // Fires a background copy of the full form to the Make.com webhook.
+    // "keepalive: true" lets this request finish even though the page is
+    // about to navigate away to FormSubmit's thank-you redirect.
+    function sendToMake(form) {
+        if (!MAKE_WEBHOOK_URL) return; // not configured yet — skip silently
+
+        const payload = collectAllFormDataAsJSON(form);
+
+        fetch(MAKE_WEBHOOK_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+            keepalive: true
+        }).catch(() => {
+            // Never block or interrupt the applicant's submission if this fails —
+            // the FormSubmit email is still the reliable fallback record.
+            console.warn("Malungelo Properties: could not reach Make.com webhook.");
+        });
+    }
+
     applicationForm.addEventListener("submit", function (e) {
 
         // Always prevent the default submit first — we control it manually below
@@ -642,7 +683,10 @@ if (applicationForm) {
             return;
         }
 
-        // Validation passed — submit straight to FormSubmit, no EmailJS involved.
+        // Send the full application to Make.com (which pushes it into Excel Online)
+        sendToMake(applicationForm);
+
+        // Then continue on to FormSubmit as before — email still sends normally.
         applicationForm.submit();
 
     });
