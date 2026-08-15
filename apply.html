@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply Now | Malungelo Properties</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<header id="navbar">
+    <nav>
+        <div class="logo">
+            <a href="index.html"><img src="logo.jpeg" alt="Malungelo Properties Logo"></a>
+        </div>
+        <div class="menu-container">
+            <button class="menu-btn" id="menu-btn" aria-label="Open menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="index.html#home"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="index.html#properties"><i class="fas fa-building"></i> Properties</a></li>
+                <li>
+                    <a href="https://www.google.com/maps?q=15+Western+Rd,+Gqeberha,+South+Africa" target="_blank" rel="noopener">
+                        <i class="fas fa-map-marker-alt"></i> Location
+                    </a>
+                </li>
+                <li><a href="index.html#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+            </ul>
+        </div>
+        <button id="theme-toggle" aria-label="Toggle light/dark mode">
+            <i class="fas fa-moon"></i>
+        </button>
+    </nav>
+</header>
+
+<!-- APPLY HERO -->
+<section class="apply-hero">
+    <div class="apply-hero-overlay"></div>
+    <div class="apply-hero-content">
+        <span class="hero-eyebrow">Malungelo Properties</span>
+        <h1>Apply for Student Accommodation</h1>
+        <p>Complete the application below and our team will contact you shortly.</p>
+    </div>
+</section>
+
+<!-- APPLICATION FORM -->
+<section class="apply-form-section">
+    <div class="form-card">
+        <div class="form-card-header">
+            <div class="section-label">Application</div>
+            <h2>Tell Us About Yourself</h2>
+            <p>All fields are required so we can process your application accurately.</p>
+        </div>
+
+        <form
+            class="application-form"
+            action="https://formsubmit.co/malungeloproperties15@gmail.com"
+            method="POST"
+            novalidate
+        >
+            <!-- FormSubmit configuration -->
+            <input type="hidden" name="_subject" value="New Application - Malungelo Properties">
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_template" value="table">
+            <input type="hidden" name="_next" value="https://malungeloproperties.co.za/thankyou.html">
+
+            <div class="form-group">
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" name="First Name" placeholder="e.g. Tumelo" required>
+                <span class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="surname">Surname</label>
+                <input type="text" id="surname" name="Surname" placeholder="e.g. Machete" required>
+                <span class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="idNumber">South African ID Number</label>
+                <input type="text" id="idNumber" name="ID Number" placeholder="13-digit ID number" inputmode="numeric" pattern="[0-9]{13}" maxlength="13" title="Please enter a valid 13-digit South African ID number" required>
+                <span class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="studentNumber">Student Number (if applicable)</label>
+                <input type="text" id="studentNumber" name="Student Number" placeholder="e.g. 221012345 (leave blank if not yet registered)">
+                <span class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="Phone Number" placeholder="e.g. 060 889 9073" pattern="(\+27|0)[0-9]{9}" title="Please enter a valid South African phone number, e.g. 0657100641 or +27657100641" required>
+                <span class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="Email Address" placeholder="you@example.com" required>
+                <span class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="gender">Gender</label>
+                <select id="gender" name="Gender" required>
+                    <option value="" disabled selected>Select an option</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+                <span class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="institution">Institution</label>
+                <select id="institution" name="Institution" required>
+                    <option value="" disabled selected>Select an option</option>
+                    <option value="Nelson Mandela University">Nelson Mandela University</option>
+                    <option value="Rosebank College">Rosebank College</option>
+                    <option value="PE TVET College">PE TVET College</option>
+                    <option value="Other">Other</option>
+                </select>
+                <span class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="studentStatus">Student Status</label>
+                <select id="studentStatus" name="Student Status" required>
+                    <option value="" disabled selected>Select an option</option>
+                    <option value="First Year">First Year</option>
+                    <option value="Returning Student">Returning Student</option>
+                </select>
+                <span class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="accommodation">Accommodation</label>
+                <select id="accommodation" name="Accommodation" required>
+                    <option value="" disabled selected>Select an option</option>
+                    <option value="Western House">Western House</option>
+                    <option value="Park Place">Park Place</option>
+                    <option value="Westbourne House">Westbourne House</option>
+                </select>
+                <span class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="roomType">Room Type</label>
+                <select id="roomType" name="Room Type" required>
+                    <option value="" disabled selected>Select an option</option>
+                    <option value="Single Room">Single Room</option>
+                    <option value="Sharing Room">Sharing Room</option>
+                </select>
+                <span class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="nsfas">NSFAS Funded</label>
+                <select id="nsfas" name="NSFAS Funded" required>
+                    <option value="" disabled selected>Select an option</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+                <span class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="emergencyName">Emergency Contact Name</label>
+                <input type="text" id="emergencyName" name="Emergency Contact Name" placeholder="Full name" required>
+                <span class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="emergencyNumber">Emergency Contact Number</label>
+                <input type="tel" id="emergencyNumber" name="Emergency Contact Number" placeholder="e.g. 060 889 9073" pattern="(\+27|0)[0-9]{9}" title="Please enter a valid South African phone number" required>
+                <span class="error-message"></span>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="notes">Additional Notes</label>
+                <textarea id="notes" name="Additional Notes" placeholder="Anything else you'd like us to know?"></textarea>
+            </div>
+
+            <div class="form-checkbox">
+                <input type="checkbox" id="confirm" name="Confirmation" value="Confirmed" required>
+                <label for="confirm">I confirm that all the information provided is correct.</label>
+            </div>
+
+            <div class="form-submit-wrap">
+                <button type="submit" class="btn-primary form-submit-btn">
+                    Submit Application <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-inner">
+        <div class="footer-logo">
+            <img src="logo.jpeg" alt="Malungelo Properties">
+            <span>Malungelo Properties</span>
+        </div>
+        <p class="footer-copy">&copy; 2026 Malungelo Properties. All rights reserved.</p>
+        <div class="footer-socials">
+            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="https://wa.me/27657100641" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+    </div>
+</footer>
+
+<!-- FLOATING BUTTONS -->
+<div class="float-stack">
+    <a href="https://wa.me/27657100641" class="whatsapp-btn" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+        <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp">
+    </a>
+</div>
+<button id="back-to-top" aria-label="Back to top">
+    <i class="fas fa-arrow-up"></i>
+</button>
+<div id="cursor-glow" aria-hidden="true"></div>
+
+<script src="script.js"></script>
+<script>
+    // Basic client-side validation feedback so users can't submit an empty/invalid form.
+    // Native HTML5 "required" + "pattern" attributes already block submission;
+    // this just adds a friendly shake + highlight instead of the default browser popover only.
+    (function () {
+        const form = document.querySelector('.application-form');
+        if (!form) return;
+
+        form.addEventListener('submit', function (e) {
+            let firstInvalid = null;
+
+            form.querySelectorAll('.form-group').forEach(function (group) {
+                const field = group.querySelector('input, select, textarea');
+                if (!field) return;
+                if (!field.checkValidity()) {
+                    group.classList.add('error');
+                    if (!firstInvalid) firstInvalid = field;
+                } else {
+                    group.classList.remove('error');
+                }
+            });
+
+            const checkbox = document.getElementById('confirm');
+            if (checkbox && !checkbox.checkValidity()) {
+                if (!firstInvalid) firstInvalid = checkbox;
+            }
+
+            if (firstInvalid) {
+                e.preventDefault();
+                firstInvalid.focus();
+                firstInvalid.reportValidity();
+            }
+        });
+
+        form.querySelectorAll('input, select, textarea').forEach(function (field) {
+            field.addEventListener('input', function () {
+                const group = field.closest('.form-group');
+                if (group && field.checkValidity()) {
+                    group.classList.remove('error');
+                }
+            });
+        });
+    })();
+</script>
+</body>
+</html>
