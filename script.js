@@ -668,10 +668,25 @@ if (applicationForm) {
         });
     }
 
+    // ── DOUBLE-SUBMIT PROTECTION ──────────
+    // Guards against: (1) the applicant double-clicking/double-tapping the
+    // submit button, and (2) a slow/flaky connection tempting them to click
+    // submit again while the first request is still in flight. Once a
+    // submit is underway we lock the button and ignore any further submit
+    // events until the page actually navigates away or something fails.
+    const submitBtn = applicationForm.querySelector('button[type="submit"], input[type="submit"]');
+    let isSubmitting = false;
+
     applicationForm.addEventListener("submit", function (e) {
 
         // Always prevent the default submit first — we control it manually below
         e.preventDefault();
+
+        // If we're already mid-submit (e.g. a second click slipped through
+        // before the button finished disabling), ignore this one entirely.
+        if (isSubmitting) {
+            return;
+        }
 
         // Run validation. If anything fails, stop here and show the errors.
         if (!validateAllFields()) {
@@ -683,10 +698,32 @@ if (applicationForm) {
             return;
         }
 
+        // Lock the form immediately so nothing can trigger a second submit
+        // while this one is in progress (network lag, double-click, etc.)
+        isSubmitting = true;
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.dataset.originalText = submitBtn.dataset.originalText || submitBtn.textContent;
+            submitBtn.textContent = "Submitting...";
+        }
+
         // Send the full application to Make.com (which pushes it into Excel Online)
         sendToMake(applicationForm);
 
         // Then continue on to FormSubmit as before — email still sends normally.
+        // The page will navigate away to FormSubmit's thank-you redirect, so
+        // there's no need to re-enable the button on the success path.
+        // As a safety net in case the browser doesn't navigate away for some
+        // reason (e.g. FormSubmit is slow or unreachable), re-enable the
+        // button after a timeout so the applicant isn't stuck.
+        setTimeout(() => {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = submitBtn.dataset.originalText;
+            }
+            isSubmitting = false;
+        }, 15000);
+
         applicationForm.submit();
 
     });
