@@ -54,6 +54,7 @@
             <div class="section-label">Application</div>
             <h2>Tell Us About Yourself</h2>
             <p>All fields are required so we can process your application accurately.</p>
+            <p id="selected-property-message" class="selected-property-message" hidden></p>
         </div>
 
         <form
@@ -187,7 +188,7 @@
 
             <div class="form-checkbox">
                 <input type="checkbox" id="confirm" name="Confirmation" value="Confirmed" required>
-                <label for="confirm">I confirm that all the information provided is correct.</label>
+                <label for="confirm">I have read and accept the application declaration.</label>
             </div>
 
             <div class="form-submit-wrap">
@@ -198,6 +199,34 @@
         </form>
     </div>
 </section>
+
+<!-- APPLICATION DECLARATION POP-UP -->
+<div class="declaration-modal" id="declaration-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="declaration-title">
+    <div class="declaration-dialog">
+        <button type="button" class="declaration-close" id="declaration-close" aria-label="Close declaration"><i class="fas fa-times"></i></button>
+        <span class="declaration-kicker">Before you submit</span>
+        <h2 id="declaration-title">Application Declaration</h2>
+        <p>By continuing, you confirm that the details you give to Malungelo Properties are honest, up to date, and complete to the best of your knowledge.</p>
+        <p>Leaving out important information or giving incorrect details that are not genuine may result in your application not being considered. If a room has already been allocated, the allocation may be withdrawn.</p>
+        <p>If your application is successful, you agree to follow the residence rules and to:</p>
+        <ul>
+            <li>Respect fellow residents, staff, visitors, and neighbours.</li>
+            <li>Take care of your room and shared spaces.</li>
+            <li>Follow safety, security, and health requirements.</li>
+            <li>Be responsible for damage caused by you or your visitors.</li>
+            <li>Pay any required fees on time.</li>
+        </ul>
+        <p class="declaration-note">Submitting an application does not guarantee a room. Allocation is subject to availability and approval.</p>
+        <label class="declaration-check" for="declaration-agree">
+            <input type="checkbox" id="declaration-agree">
+            <span>I understand and agree to this declaration.</span>
+        </label>
+        <div class="declaration-actions">
+            <button type="button" class="declaration-cancel" id="declaration-cancel">Cancel</button>
+            <button type="button" class="btn-primary declaration-proceed" id="declaration-proceed" disabled>Continue <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+</div>
 
 <!-- FOOTER -->
 <footer>
@@ -228,6 +257,21 @@
 
 <script src="script.js"></script>
 <script>
+    // When a student uses a property's Apply button, choose that residence for them.
+    (function () {
+        const selectedProperty = new URLSearchParams(window.location.search).get('property');
+        const accommodation = document.getElementById('accommodation');
+        const message = document.getElementById('selected-property-message');
+        if (!selectedProperty || !accommodation) return;
+        if (Array.from(accommodation.options).some(function (option) { return option.value === selectedProperty; })) {
+            accommodation.value = selectedProperty;
+            if (message) {
+                message.hidden = false;
+                message.innerHTML = '<i class="fas fa-check-circle"></i> You are applying for <strong>' + selectedProperty + '</strong>.';
+            }
+        }
+    })();
+
     // Basic client-side validation feedback so users can't submit an empty/invalid form.
     // Native HTML5 "required" + "pattern" attributes already block submission;
     // this just adds a friendly shake + highlight instead of the default browser popover only.

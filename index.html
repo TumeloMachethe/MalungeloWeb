@@ -8,11 +8,19 @@
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="192x192" href="favicon-192x192.png">
     <link rel="apple-touch-icon" sizes="180x180" href="favicon-180x180.png">
+    <link rel="preload" as="image" href="graduation.png" fetchpriority="high">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
+
+<!-- Fast first impression while the page assets are loading -->
+<div class="page-loader" id="page-loader" role="status" aria-live="polite">
+    <div class="loader-mark"><img src="logo.jpeg" alt=""></div>
+    <div class="loader-spinner" aria-hidden="true"></div>
+    <p>Welcome to Malungelo Properties</p>
+</div>
 
 <!-- NAVBAR -->
 <header id="navbar">
@@ -21,7 +29,7 @@
             <img src="logo.jpeg" alt="Malungelo Properties Logo">
         </div>
         <div class="menu-container">
-            <button class="menu-btn" id="menu-btn" aria-label="Open menu">
+            <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links">
                 <i class="fas fa-bars"></i>
             </button>
             <ul class="nav-links" id="nav-links">
@@ -69,7 +77,7 @@
 
     <div class="property-card">
         <a href="western-house.html" class="property-img-link">
-            <img src="property1.png" alt="15 Western House">
+            <img src="property1.png" alt="15 Western House" loading="lazy" decoding="async">
             <div class="img-overlay"><span>View Property</span></div>
         </a>
         <div class="property-info">
@@ -85,13 +93,16 @@
                 <div class="property-price"><i class="fas fa-coins"></i> R3 200 <span class="price-period">/month</span></div>
                 <div class="property-status">Available</div>
             </div>
-            <a href="western-house.html" class="btn-primary">View Details <i class="fas fa-arrow-right"></i></a>
+            <div class="property-actions">
+                <a href="western-house.html" class="btn-primary">View Details <i class="fas fa-arrow-right"></i></a>
+                <a href="apply.html?property=Western%20House" class="apply-btn">Apply for Western House <i class="fas fa-arrow-right"></i></a>
+            </div>
         </div>
     </div>
 
     <div class="property-card reverse">
         <a href="new-property.html" class="property-img-link">
-            <img src="property2.jpg" alt="Park Place">
+            <img src="property2.jpg" alt="Park Place" loading="lazy" decoding="async">
             <div class="img-overlay"><span>View Property</span></div>
         </a>
         <div class="property-info">
@@ -107,13 +118,16 @@
                 <div class="property-price"><i class="fas fa-coins"></i> R3 200 <span class="price-period">/month</span></div>
                 <div class="property-status">Available</div>
             </div>
-            <a href="new-property.html" class="btn-primary">View Details <i class="fas fa-arrow-right"></i></a>
+            <div class="property-actions">
+                <a href="new-property.html" class="btn-primary">View Details <i class="fas fa-arrow-right"></i></a>
+                <a href="apply.html?property=Park%20Place" class="apply-btn">Apply for Park Place <i class="fas fa-arrow-right"></i></a>
+            </div>
         </div>
     </div>
 
     <div class="property-card">
         <a href="westbourne-house.html" class="property-img-link">
-            <img src="property3.jpeg" alt="Westbourne House">
+            <img src="property3.jpeg" alt="Westbourne House" loading="lazy" decoding="async">
             <div class="img-overlay"><span>View Property</span></div>
         </a>
         <div class="property-info">
@@ -129,7 +143,10 @@
                 <div class="property-price"><i class="fas fa-coins"></i> R3 200 <span class="price-period">/month</span></div>
                 <div class="property-status">Available</div>
             </div>
-            <a href="westbourne-house.html" class="btn-primary">View Details <i class="fas fa-arrow-right"></i></a>
+            <div class="property-actions">
+                <a href="westbourne-house.html" class="btn-primary">View Details <i class="fas fa-arrow-right"></i></a>
+                <a href="apply.html?property=Westbourne%20House" class="apply-btn">Apply for Westbourne House <i class="fas fa-arrow-right"></i></a>
+            </div>
         </div>
     </div>
 </section>
@@ -147,35 +164,35 @@
 
         <div class="people-slides">
             <div class="people-slide active">
-                <img src="manager-photo.jpg" alt="Palesa Tumane">
+                <img src="manager-photo.jpg" alt="Palesa Tumane" loading="lazy" decoding="async">
                 <div class="people-caption">
                     <h3>Palesa Tumane</h3>
                     <span class="people-role">Property Manager / Head of Marketing</span>
                 </div>
             </div>
             <div class="people-slide">
-                <img src="Lisa Matu.jpeg" alt="Lisa Matu">
+                <img src="Lisa Matu.jpeg" alt="Lisa Matu" loading="lazy" decoding="async">
                 <div class="people-caption">
                     <h3>Lisa Matu</h3>
                     <span class="people-role">House Rep</span>
                 </div>
             </div>
             <div class="people-slide">
-                <img src="Tumelo.jpg" alt="Tumelo">
+                <img src="Tumelo.jpg" alt="Tumelo" loading="lazy" decoding="async">
                 <div class="people-caption">
                     <h3>Tumelo Machethe</h3>
                     <span class="people-role">Web Developer </span>
                 </div>
             </div>
             <div class="people-slide">
-                <img src="Misokuhle.jpeg" alt="Misokuhle Sogiba">
+                <img src="Misokuhle.jpeg" alt="Misokuhle Sogiba" loading="lazy" decoding="async">
                 <div class="people-caption">
                     <h3>Misokuhle Sogiba</h3>
                     <span class="people-role">House Rep</span>
                 </div>
             </div>
             <div class="people-slide">
-                <img src="Siphenkosi.jpeg" alt="Siphenkosi">
+                <img src="Siphenkosi.jpeg" alt="Siphenkosi" loading="lazy" decoding="async">
                 <div class="people-caption">
                     <h3>Siphenkosi Beyi</h3>
                     <span class="people-role">House Rep</span>
@@ -194,27 +211,54 @@
 <!-- SLIDER -->
 <section class="slider" id="slider">
     <div class="slide active">
-        <img src="slide1.jpg" alt="Students collaborating">
+        <img src="slide1.jpg" alt="Students collaborating" loading="lazy" decoding="async">
         <div class="slide-text">
             <h2>Our Strength Lies in Teamwork</h2>
             <p>We empower each student to grow through collaboration, support, and shared success.</p>
         </div>
     </div>
     <div class="slide">
-        <img src="slide2.jpg" alt="Student studying">
+        <img src="slide2.jpg" alt="Student studying" loading="lazy" decoding="async">
         <div class="slide-text">
             <h2>Freedom to Create Your Future</h2>
             <p>We give students the freedom to innovate and build their future with confidence.</p>
         </div>
     </div>
     <div class="slide">
-        <img src="Slide3.jpg" alt="Gqeberha beachfront">
+        <img src="Slide3.jpg" alt="Gqeberha beachfront" loading="lazy" decoding="async">
         <div class="slide-text">
             <h2>Nestled in the Heart of Gqeberha</h2>
             <p>Moments from the beachfront, city life, and breathtaking ocean views.</p>
         </div>
     </div>
     <div class="slider-dots" id="slider-dots"></div>
+</section>
+
+<!-- LIFE AT MALUNGELO ALBUMS -->
+<section class="photo-story" id="life-at-malungelo">
+    <div class="photo-story-heading">
+        <div class="section-label">Life at Malungelo</div>
+        <h2>Moments Worth Sharing</h2>
+        <p>Choose an album to see more of the Malungelo student experience.</p>
+    </div>
+    <div class="album-grid">
+        <a href="community.html" class="album-card album-community">
+            <img src="community.jpg" alt="Community at Malungelo Properties" loading="lazy" decoding="async">
+            <div class="album-card-content"><span>Album 01</span><h3>Community</h3><p>Meet the people and moments that make Malungelo feel like home.</p><b>Open album <i class="fas fa-arrow-right"></i></b></div>
+        </a>
+        <a href="focus.html" class="album-card album-focus">
+            <img src="study.jpg" alt="Focus and study at Malungelo Properties" loading="lazy" decoding="async">
+            <div class="album-card-content"><span>Album 02</span><h3>Focus</h3><p>Study spaces, routines, and the quiet moments behind success.</p><b>Open album <i class="fas fa-arrow-right"></i></b></div>
+        </a>
+        <a href="location.html" class="album-card album-location">
+            <img src="Slide3.jpg" alt="Gqeberha location near Malungelo Properties" loading="lazy" decoding="async">
+            <div class="album-card-content"><span>Album 03</span><h3>Location</h3><p>Discover Gqeberha and the places around your new home.</p><b>Open album <i class="fas fa-arrow-right"></i></b></div>
+        </a>
+        <a href="events.html" class="album-card album-events">
+            <img src="event.jpg" alt="Events and student life at Malungelo Properties" loading="lazy" decoding="async">
+            <div class="album-card-content"><span>Album 04</span><h3>Events</h3><p>See the celebrations, activities, and memories we create together.</p><b>Open album <i class="fas fa-arrow-right"></i></b></div>
+        </a>
+    </div>
 </section>
 
 <!-- FUN IMAGE -->
@@ -258,7 +302,7 @@
     <h2>Students We Accommodate</h2>
     <div class="gallery-container">
         <div class="gallery-item">
-            <img src="NMU.jpg" alt="Nelson Mandela University">
+            <img src="NMU.png" alt="Nelson Mandela University">
             <h3>Nelson Mandela University</h3>
         </div>
         <div class="gallery-item">

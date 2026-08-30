@@ -4,6 +4,18 @@
 
 document.addEventListener("DOMContentLoaded", () => {
 
+    // ── PAGE LOADER ───────────────────────
+    // It disappears as soon as the page is usable. The fallback prevents a
+    // slow third-party image or font from ever trapping a visitor on the loader.
+    const pageLoader = document.getElementById("page-loader");
+    const hidePageLoader = () => {
+        if (!pageLoader) return;
+        pageLoader.classList.add("is-hidden");
+        window.setTimeout(() => pageLoader.remove(), 420);
+    };
+    window.addEventListener("load", hidePageLoader, { once: true });
+    window.setTimeout(hidePageLoader, 3500);
+
     // ── THEME TOGGLE ──────────────────────
     const toggleBtn = document.getElementById("theme-toggle");
 
@@ -26,9 +38,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // ── NAVBAR SCROLL EFFECT ──────────────
     const navbar = document.getElementById("navbar");
     if (navbar) {
+        navbar.classList.toggle("scrolled", window.scrollY > 60);
         window.addEventListener("scroll", () => {
             navbar.classList.toggle("scrolled", window.scrollY > 60);
-        });
+        }, { passive: true });
     }
 
     // ── MOBILE MENU TOGGLE ────────────────
@@ -39,12 +52,14 @@ document.addEventListener("DOMContentLoaded", () => {
         menuBtn.addEventListener("click", (e) => {
             e.stopPropagation();
             navLinks.classList.toggle("active");
+            menuBtn.setAttribute("aria-expanded", navLinks.classList.contains("active"));
         });
 
         // Close on outside click
         document.addEventListener("click", (e) => {
-            if (!navLinks.contains(e.target) && e.target !== menuBtn) {
+            if (!navLinks.contains(e.target) && !menuBtn.contains(e.target)) {
                 navLinks.classList.remove("active");
+                menuBtn.setAttribute("aria-expanded", "false");
             }
         });
 
@@ -52,6 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
         navLinks.querySelectorAll("a").forEach(link => {
             link.addEventListener("click", () => {
                 navLinks.classList.remove("active");
+                menuBtn.setAttribute("aria-expanded", "false");
             });
         });
     }
@@ -97,6 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (slides.length > 0) {
         let currentSlide = 0;
+        let slideTimer;
 
         // Build dots
         if (dotsContainer) {
@@ -121,7 +138,47 @@ document.addEventListener("DOMContentLoaded", () => {
             goToSlide((currentSlide + 1) % slides.length);
         }
 
-        setInterval(nextSlide, 4500);
+        function previousSlide() {
+            goToSlide((currentSlide - 1 + slides.length) % slides.length);
+        }
+
+        function startSlider() {
+            clearInterval(slideTimer);
+            slideTimer = setInterval(nextSlide, 4500);
+        }
+
+        // Add clear touch-friendly controls without changing the HTML structure.
+        const slider = slides[0].closest('.slider');
+        if (slider) {
+            const controls = document.createElement('div');
+            controls.className = 'slider-controls';
+            controls.innerHTML = `
+                <button type="button" class="slider-arrow slider-prev" aria-label="Previous slide"><i class="fas fa-chevron-left"></i></button>
+                <button type="button" class="slider-arrow slider-next" aria-label="Next slide"><i class="fas fa-chevron-right"></i></button>`;
+            slider.appendChild(controls);
+
+            controls.querySelector('.slider-prev').addEventListener('click', () => {
+                previousSlide();
+                startSlider();
+            });
+            controls.querySelector('.slider-next').addEventListener('click', () => {
+                nextSlide();
+                startSlider();
+            });
+
+            let touchStartX = 0;
+            slider.addEventListener('touchstart', (event) => {
+                touchStartX = event.changedTouches[0].screenX;
+            }, { passive: true });
+            slider.addEventListener('touchend', (event) => {
+                const distance = event.changedTouches[0].screenX - touchStartX;
+                if (Math.abs(distance) < 45) return;
+                distance < 0 ? nextSlide() : previousSlide();
+                startSlider();
+            }, { passive: true });
+        }
+
+        startSlider();
     }
 
     // ── MEET THE STUDENTS SLIDESHOW ───────
@@ -590,9 +647,9 @@ document.addEventListener("DOMContentLoaded", () => {
 // APPLICATION FORM — VALIDATION + FORMSUBMIT + ZAPIER TRACKER
 // =========================================
 
-const applicationForm = document.querySelector(".application-form");
+    const applicationForm = document.querySelector(".application-form");
 
-if (applicationForm) {
+    if (applicationForm) {
 
     // Make.com webhook — receives the full application and pushes it into
     // the Excel Online "ApplicationsTable" via the connected scenario.
@@ -619,6 +676,59 @@ if (applicationForm) {
             field.classList.remove("invalid");
             return true;
         }
+    }
+
+    // ── APPLICATION DECLARATION MODAL ─────
+    const confirmBox = document.getElementById("confirm");
+    const declarationModal = document.getElementById("declaration-modal");
+    const declarationAgree = document.getElementById("declaration-agree");
+    const declarationProceed = document.getElementById("declaration-proceed");
+    const declarationClose = document.getElementById("declaration-close");
+    const declarationCancel = document.getElementById("declaration-cancel");
+
+    if (confirmBox && declarationModal && declarationAgree && declarationProceed) {
+        const closeDeclaration = () => {
+            declarationModal.classList.remove("is-open");
+            declarationModal.setAttribute("aria-hidden", "true");
+            declarationAgree.checked = false;
+        };
+
+        const openDeclaration = () => {
+            declarationModal.classList.add("is-open");
+            declarationModal.setAttribute("aria-hidden", "false");
+            declarationProceed.disabled = true;
+            declarationAgree.focus();
+        };
+
+        confirmBox.addEventListener("change", () => {
+            if (confirmBox.checked && confirmBox.dataset.declarationAccepted !== "true") {
+                confirmBox.checked = false;
+                openDeclaration();
+            }
+        });
+
+        declarationAgree.addEventListener("change", () => {
+            declarationProceed.disabled = !declarationAgree.checked;
+        });
+
+        declarationProceed.addEventListener("click", () => {
+            confirmBox.dataset.declarationAccepted = "true";
+            confirmBox.checked = true;
+            closeDeclaration();
+            confirmBox.focus();
+        });
+
+        [declarationClose, declarationCancel].forEach((button) => {
+            if (button) button.addEventListener("click", closeDeclaration);
+        });
+
+        declarationModal.addEventListener("click", (event) => {
+            if (event.target === declarationModal) closeDeclaration();
+        });
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape" && declarationModal.classList.contains("is-open")) closeDeclaration();
+        });
     }
 
     function validateAllFields() {
