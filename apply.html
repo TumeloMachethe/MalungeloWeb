@@ -68,6 +68,8 @@
             <input type="hidden" name="_captcha" value="false">
             <input type="hidden" name="_template" value="table">
             <input type="hidden" name="_next" value="https://malungeloproperties.co.za/thankyou.html">
+            <input type="hidden" name="Legal Policy Version" value="13 September 2026">
+            <input type="hidden" id="consentAcceptedAt" name="Consent Accepted At" value="">
 
             <div class="form-group">
                 <label for="firstName">First Name</label>
@@ -186,9 +188,42 @@
                 <textarea id="notes" name="Additional Notes" placeholder="Anything else you'd like us to know?"></textarea>
             </div>
 
-            <div class="form-checkbox">
-                <input type="checkbox" id="confirm" name="Confirmation" value="Confirmed" required>
-                <label for="confirm">I have read and accept the application declaration.</label>
+            <div class="legal-consent-panel full-width">
+                <div class="legal-consent-heading">
+                    <span><i class="fas fa-shield-halved"></i> Before you submit</span>
+                    <h3>Please review and accept</h3>
+                    <p>These confirmations help Malungelo Properties process your application fairly and protect your personal information.</p>
+                </div>
+
+                <div class="form-checkbox legal-checkbox">
+                    <input type="checkbox" id="confirm" name="Application Declaration Accepted" value="Yes" required>
+                    <div class="consent-copy">
+                        <label for="confirm">I have read and accept the application declaration.</label>
+                        <button type="button" class="consent-review-link" id="open-declaration">Read declaration</button>
+                        <span class="error-message"></span>
+                    </div>
+                </div>
+
+                <div class="form-checkbox legal-checkbox">
+                    <input type="checkbox" id="legalAccept" name="Terms and Policies Accepted" value="Yes" required>
+                    <div class="consent-copy">
+                        <label for="legalAccept">I have read and agree to the Terms and Conditions, Residence Rules and Cancellation Policy.</label>
+                        <button type="button" class="consent-review-link" id="open-terms-review">Review summary</button>
+                        <span class="error-message"></span>
+                    </div>
+                </div>
+
+                <div class="form-checkbox legal-checkbox">
+                    <input type="checkbox" id="privacyConsent" name="Privacy Processing Consent" value="Yes" required>
+                    <div class="consent-copy">
+                        <label for="privacyConsent">I acknowledge the <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a> and consent to Malungelo Properties processing the personal information in this application for assessing and managing my accommodation application and, if successful, my accommodation.</label>
+                        <span class="error-message"></span>
+                    </div>
+                </div>
+
+                <p class="consent-small-print">
+                    By providing an emergency contact, you confirm that you are authorised to share that person's contact details for accommodation related and emergency purposes.
+                </p>
             </div>
 
             <div class="form-submit-wrap">
@@ -214,9 +249,11 @@
             <li>Take care of your room and shared spaces.</li>
             <li>Follow safety, security, and health requirements.</li>
             <li>Be responsible for damage caused by you or your visitors.</li>
-            <li>Pay any required fees on time.</li>
+            <li>Pay any required fees in accordance with your written accommodation agreement.</li>
         </ul>
+        <p>You also confirm that you are authorised to provide the emergency contact details included in this application.</p>
         <p class="declaration-note">Submitting an application does not guarantee a room. Allocation is subject to availability and approval.</p>
+        <p class="modal-policy-line">See the full <a href="residence-rules.html" target="_blank" rel="noopener">Residence Rules</a> and <a href="terms.html" target="_blank" rel="noopener">Terms and Conditions</a>.</p>
         <label class="declaration-check" for="declaration-agree">
             <input type="checkbox" id="declaration-agree">
             <span>I understand and agree to this declaration.</span>
@@ -228,6 +265,59 @@
     </div>
 </div>
 
+<!-- TERMS & POLICIES REVIEW POP-UP -->
+<div class="declaration-modal" id="terms-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="terms-modal-title">
+    <div class="declaration-dialog legal-review-dialog">
+        <button type="button" class="declaration-close" id="terms-modal-close" aria-label="Close terms review"><i class="fas fa-times"></i></button>
+        <span class="declaration-kicker">Please read carefully</span>
+        <h2 id="terms-modal-title">Terms & Conditions</h2>
+        <p>This is a short summary. The full legal pages remain available below and in the website footer.</p>
+
+        <div class="terms-summary-list">
+            <section>
+                <h3>1. Application Process</h3>
+                <p>You must provide information that is accurate and complete. False or materially misleading information may result in an application being declined or an allocation being withdrawn.</p>
+            </section>
+            <section>
+                <h3>2. Accommodation Assignment</h3>
+                <p>Room and property preferences are considered, but allocation depends on availability, approval and the applicable accommodation process. A submitted application does not guarantee placement.</p>
+            </section>
+            <section>
+                <h3>3. Payment Terms</h3>
+                <p>Any fees, deposits or accommodation charges that apply will be communicated in writing and are payable according to the applicable offer or accommodation agreement.</p>
+            </section>
+            <section>
+                <h3>4. Privacy</h3>
+                <p>Your personal information will be processed for accommodation related purposes in accordance with the Malungelo Properties Privacy Policy and applicable South African data protection law.</p>
+            </section>
+            <section>
+                <h3>5. Cancellation</h3>
+                <p>Application withdrawals and accommodation cancellations must be communicated in writing. Any refund or cancellation charge will depend on the stage of the application, the signed agreement and applicable law.</p>
+            </section>
+            <section>
+                <h3>6. Residence Rules</h3>
+                <p>If you are accepted, you are expected to respect residents, staff, neighbours, property, safety rules and any property specific house rules given to you.</p>
+            </section>
+        </div>
+
+        <div class="legal-modal-links">
+            <a href="terms.html" target="_blank" rel="noopener"><i class="fas fa-file-contract"></i> Full Terms</a>
+            <a href="privacy.html" target="_blank" rel="noopener"><i class="fas fa-user-shield"></i> Privacy Policy</a>
+            <a href="residence-rules.html" target="_blank" rel="noopener"><i class="fas fa-house-user"></i> Residence Rules</a>
+            <a href="cancellation-policy.html" target="_blank" rel="noopener"><i class="fas fa-ban"></i> Cancellation Policy</a>
+        </div>
+
+        <label class="declaration-check" for="terms-agree">
+            <input type="checkbox" id="terms-agree">
+            <span>I have read this summary and agree to the linked terms and policies.</span>
+        </label>
+        <div class="declaration-actions">
+            <button type="button" class="declaration-cancel" id="terms-modal-cancel">Cancel</button>
+            <button type="button" class="btn-primary declaration-proceed" id="terms-modal-proceed" disabled>Accept & Continue <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+</div>
+
 <!-- FOOTER -->
 <footer>
     <div class="footer-inner">
@@ -235,7 +325,15 @@
             <img src="logo.jpeg" alt="Malungelo Properties">
             <span>Malungelo Properties</span>
         </div>
-        <p class="footer-copy">&copy; 2026 Malungelo Properties. All rights reserved.</p>
+        <div class="footer-middle">
+            <p class="footer-copy">&copy; 2026 Malungelo Properties. All rights reserved.</p>
+            <div class="footer-legal" aria-label="Legal links">
+                <a href="terms.html">Terms & Conditions</a>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="residence-rules.html">Residence Rules</a>
+                <a href="cancellation-policy.html">Cancellation Policy</a>
+            </div>
+        </div>
         <div class="footer-socials">
             <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
             <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>

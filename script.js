@@ -644,12 +644,48 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // =========================================
-// APPLICATION FORM — VALIDATION + FORMSUBMIT + ZAPIER TRACKER
+// SITE-WIDE LEGAL FOOTER LINKS
 // =========================================
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll("footer .footer-inner").forEach((footerInner) => {
+        // apply.html already contains the legal links in its markup.
+        if (footerInner.querySelector(".footer-legal")) return;
 
-    const applicationForm = document.querySelector(".application-form");
+        const existingCopy = footerInner.querySelector(".footer-copy");
+        const footerMiddle = document.createElement("div");
+        footerMiddle.className = "footer-middle";
 
-    if (applicationForm) {
+        if (existingCopy) {
+            existingCopy.parentNode.insertBefore(footerMiddle, existingCopy);
+            footerMiddle.appendChild(existingCopy);
+        } else {
+            const copy = document.createElement("p");
+            copy.className = "footer-copy";
+            copy.innerHTML = "&copy; 2026 Malungelo Properties. All rights reserved.";
+            footerMiddle.appendChild(copy);
+            const socials = footerInner.querySelector(".footer-socials");
+            footerInner.insertBefore(footerMiddle, socials || null);
+        }
+
+        const legal = document.createElement("div");
+        legal.className = "footer-legal";
+        legal.setAttribute("aria-label", "Legal links");
+        legal.innerHTML = `
+            <a href="terms.html">Terms & Conditions</a>
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="residence-rules.html">Residence Rules</a>
+            <a href="cancellation-policy.html">Cancellation Policy</a>
+        `;
+        footerMiddle.appendChild(legal);
+    });
+});
+
+// =========================================
+// APPLICATION FORM — VALIDATION + FORMSUBMIT + MAKE.COM
+// =========================================
+const applicationForm = document.querySelector(".application-form");
+
+if (applicationForm) {
 
     // Make.com webhook — receives the full application and pushes it into
     // the Excel Online "ApplicationsTable" via the connected scenario.
@@ -657,25 +693,48 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const formFields = applicationForm.querySelectorAll("input, select, textarea");
 
-    // Live validation as the user types/leaves a field
+    function getFieldContainer(field) {
+        return field.closest(".form-group, .form-checkbox") || field.parentElement;
+    }
+
+    function validateField(field) {
+        if (!field || field.type === "hidden") return true;
+
+        const container = getFieldContainer(field);
+        const errorSpan = container ? container.querySelector(".error-message") : null;
+        const isValid = field.checkValidity();
+
+        if (!isValid) {
+            let message = field.validationMessage || "Please complete this field.";
+            if (field.type === "checkbox" && field.required && !field.checked) {
+                message = "Please tick this box before submitting.";
+            }
+            if (errorSpan) errorSpan.textContent = message;
+            field.classList.add("invalid");
+            if (container) container.classList.add("has-error");
+            return false;
+        }
+
+        if (errorSpan) errorSpan.textContent = "";
+        field.classList.remove("invalid");
+        if (container) container.classList.remove("has-error");
+        return true;
+    }
+
+    // Live validation
     formFields.forEach((field) => {
+        if (field.type === "hidden") return;
         field.addEventListener("input", () => validateField(field));
+        field.addEventListener("change", () => validateField(field));
         field.addEventListener("blur", () => validateField(field));
     });
 
-    function validateField(field) {
-        const errorSpan = field.parentElement.querySelector(".error-message");
-        if (!errorSpan) return true;
-
-        if (!field.checkValidity()) {
-            errorSpan.textContent = field.validationMessage;
-            field.classList.add("invalid");
-            return false;
-        } else {
-            errorSpan.textContent = "";
-            field.classList.remove("invalid");
-            return true;
-        }
+    function validateAllFields() {
+        let allValid = true;
+        formFields.forEach((field) => {
+            if (!validateField(field)) allValid = false;
+        });
+        return allValid;
     }
 
     // ── APPLICATION DECLARATION MODAL ─────
@@ -685,19 +744,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const declarationProceed = document.getElementById("declaration-proceed");
     const declarationClose = document.getElementById("declaration-close");
     const declarationCancel = document.getElementById("declaration-cancel");
+    const openDeclarationButton = document.getElementById("open-declaration");
 
     if (confirmBox && declarationModal && declarationAgree && declarationProceed) {
         const closeDeclaration = () => {
             declarationModal.classList.remove("is-open");
             declarationModal.setAttribute("aria-hidden", "true");
             declarationAgree.checked = false;
+            declarationProceed.disabled = true;
+            document.body.classList.remove("modal-open");
         };
 
         const openDeclaration = () => {
             declarationModal.classList.add("is-open");
             declarationModal.setAttribute("aria-hidden", "false");
+            declarationAgree.checked = false;
             declarationProceed.disabled = true;
-            declarationAgree.focus();
+            document.body.classList.add("modal-open");
+            window.setTimeout(() => declarationAgree.focus(), 50);
         };
 
         confirmBox.addEventListener("change", () => {
@@ -705,7 +769,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 confirmBox.checked = false;
                 openDeclaration();
             }
+            validateField(confirmBox);
         });
+
+        if (openDeclarationButton) {
+            openDeclarationButton.addEventListener("click", openDeclaration);
+        }
 
         declarationAgree.addEventListener("change", () => {
             declarationProceed.disabled = !declarationAgree.checked;
@@ -714,6 +783,7 @@ document.addEventListener("DOMContentLoaded", () => {
         declarationProceed.addEventListener("click", () => {
             confirmBox.dataset.declarationAccepted = "true";
             confirmBox.checked = true;
+            validateField(confirmBox);
             closeDeclaration();
             confirmBox.focus();
         });
@@ -727,42 +797,90 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         document.addEventListener("keydown", (event) => {
-            if (event.key === "Escape" && declarationModal.classList.contains("is-open")) closeDeclaration();
-        });
-    }
-
-    function validateAllFields() {
-        let allValid = true;
-        formFields.forEach((field) => {
-            if (!validateField(field)) {
-                allValid = false;
+            if (event.key === "Escape" && declarationModal.classList.contains("is-open")) {
+                closeDeclaration();
             }
         });
-        return allValid;
     }
 
-    // Grabs EVERY field currently on the form by its "name" attribute and
-    // turns it into a plain JSON object. This is dynamic — if fields are
-    // ever added, removed, or renamed on the form, this automatically
-    // picks up the change with zero edits needed here. (Just remember: if
-    // you add a brand-new field later, you'll still need to map it to a
-    // column inside your Zapier step — this only handles the "sending" side.)
+    // ── TERMS & POLICIES REVIEW MODAL ─────
+    const legalAcceptBox = document.getElementById("legalAccept");
+    const termsModal = document.getElementById("terms-modal");
+    const termsAgree = document.getElementById("terms-agree");
+    const termsProceed = document.getElementById("terms-modal-proceed");
+    const termsClose = document.getElementById("terms-modal-close");
+    const termsCancel = document.getElementById("terms-modal-cancel");
+    const openTermsReviewButton = document.getElementById("open-terms-review");
+
+    if (legalAcceptBox && termsModal && termsAgree && termsProceed) {
+        const closeTermsModal = () => {
+            termsModal.classList.remove("is-open");
+            termsModal.setAttribute("aria-hidden", "true");
+            termsAgree.checked = false;
+            termsProceed.disabled = true;
+            document.body.classList.remove("modal-open");
+        };
+
+        const openTermsModal = () => {
+            termsModal.classList.add("is-open");
+            termsModal.setAttribute("aria-hidden", "false");
+            termsAgree.checked = false;
+            termsProceed.disabled = true;
+            document.body.classList.add("modal-open");
+            window.setTimeout(() => termsAgree.focus(), 50);
+        };
+
+        legalAcceptBox.addEventListener("change", () => {
+            if (legalAcceptBox.checked && legalAcceptBox.dataset.termsAccepted !== "true") {
+                legalAcceptBox.checked = false;
+                openTermsModal();
+            }
+            validateField(legalAcceptBox);
+        });
+
+        if (openTermsReviewButton) {
+            openTermsReviewButton.addEventListener("click", openTermsModal);
+        }
+
+        termsAgree.addEventListener("change", () => {
+            termsProceed.disabled = !termsAgree.checked;
+        });
+
+        termsProceed.addEventListener("click", () => {
+            legalAcceptBox.dataset.termsAccepted = "true";
+            legalAcceptBox.checked = true;
+            validateField(legalAcceptBox);
+            closeTermsModal();
+            legalAcceptBox.focus();
+        });
+
+        [termsClose, termsCancel].forEach((button) => {
+            if (button) button.addEventListener("click", closeTermsModal);
+        });
+
+        termsModal.addEventListener("click", (event) => {
+            if (event.target === termsModal) closeTermsModal();
+        });
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape" && termsModal.classList.contains("is-open")) {
+                closeTermsModal();
+            }
+        });
+    }
+
+    // Grabs every named field and turns it into a plain JSON object.
     function collectAllFormDataAsJSON(form) {
         const data = {};
         new FormData(form).forEach((value, key) => {
             data[key] = value;
         });
-        // Add a server-side-friendly timestamp so Zapier/Excel has a
-        // reliable "Date Received" value without relying on the browser clock.
         data["Submitted At"] = new Date().toISOString();
         return data;
     }
 
-    // Fires a background copy of the full form to the Make.com webhook.
-    // "keepalive: true" lets this request finish even though the page is
-    // about to navigate away to FormSubmit's thank-you redirect.
     function sendToMake(form) {
-        if (!MAKE_WEBHOOK_URL) return; // not configured yet — skip silently
+        if (!MAKE_WEBHOOK_URL) return;
 
         const payload = collectAllFormDataAsJSON(form);
 
@@ -772,70 +890,55 @@ document.addEventListener("DOMContentLoaded", () => {
             body: JSON.stringify(payload),
             keepalive: true
         }).catch(() => {
-            // Never block or interrupt the applicant's submission if this fails —
-            // the FormSubmit email is still the reliable fallback record.
+            // Do not block the FormSubmit email if the automation endpoint is unavailable.
             console.warn("Malungelo Properties: could not reach Make.com webhook.");
         });
     }
 
     // ── DOUBLE-SUBMIT PROTECTION ──────────
-    // Guards against: (1) the applicant double-clicking/double-tapping the
-    // submit button, and (2) a slow/flaky connection tempting them to click
-    // submit again while the first request is still in flight. Once a
-    // submit is underway we lock the button and ignore any further submit
-    // events until the page actually navigates away or something fails.
     const submitBtn = applicationForm.querySelector('button[type="submit"], input[type="submit"]');
+    const consentTimestamp = document.getElementById("consentAcceptedAt");
     let isSubmitting = false;
 
     applicationForm.addEventListener("submit", function (e) {
-
-        // Always prevent the default submit first — we control it manually below
         e.preventDefault();
 
-        // If we're already mid-submit (e.g. a second click slipped through
-        // before the button finished disabling), ignore this one entirely.
-        if (isSubmitting) {
-            return;
-        }
+        if (isSubmitting) return;
 
-        // Run validation. If anything fails, stop here and show the errors.
         if (!validateAllFields()) {
             const firstInvalid = applicationForm.querySelector(".invalid");
             if (firstInvalid) {
                 firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
-                firstInvalid.focus();
+                firstInvalid.focus({ preventScroll: true });
             }
             return;
         }
 
-        // Lock the form immediately so nothing can trigger a second submit
-        // while this one is in progress (network lag, double-click, etc.)
-        isSubmitting = true;
-        if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.dataset.originalText = submitBtn.dataset.originalText || submitBtn.textContent;
-            submitBtn.textContent = "Submitting...";
+        // Record the exact submission/acceptance time in both FormSubmit and Make.
+        if (consentTimestamp) {
+            consentTimestamp.value = new Date().toISOString();
         }
 
-        // Send the full application to Make.com (which pushes it into Excel Online)
+        isSubmitting = true;
+
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.dataset.originalHtml = submitBtn.dataset.originalHtml || submitBtn.innerHTML;
+            submitBtn.innerHTML = 'Submitting... <i class="fas fa-spinner fa-spin"></i>';
+        }
+
         sendToMake(applicationForm);
 
-        // Then continue on to FormSubmit as before — email still sends normally.
-        // The page will navigate away to FormSubmit's thank-you redirect, so
-        // there's no need to re-enable the button on the success path.
-        // As a safety net in case the browser doesn't navigate away for some
-        // reason (e.g. FormSubmit is slow or unreachable), re-enable the
-        // button after a timeout so the applicant isn't stuck.
+        // Safety net if FormSubmit fails to navigate away.
         setTimeout(() => {
             if (submitBtn) {
                 submitBtn.disabled = false;
-                submitBtn.textContent = submitBtn.dataset.originalText;
+                submitBtn.innerHTML = submitBtn.dataset.originalHtml;
             }
             isSubmitting = false;
         }, 15000);
 
+        // Deliberately call the native submit method after our validation and tracking.
         applicationForm.submit();
-
     });
-
 }
