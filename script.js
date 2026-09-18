@@ -108,146 +108,135 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ── IMAGE SLIDER ──────────────────────
-    const slides = document.querySelectorAll(".slide");
-    const dotsContainer = document.getElementById("slider-dots");
+    // Automatic-only slider: no arrows, no click-to-change controls, no swipe controls.
+    // The timer only runs while the slider is on screen to reduce unnecessary work.
+    const slider = document.querySelector(".slider");
 
-    if (slides.length > 0) {
+    if (slider) {
+        const slides = slider.querySelectorAll(".slide");
+        const dotsContainer = slider.querySelector("#slider-dots");
         let currentSlide = 0;
-        let slideTimer;
+        let slideTimer = null;
 
-        // Build dots
-        if (dotsContainer) {
+        if (slides.length > 0 && dotsContainer) {
+            dotsContainer.innerHTML = "";
             slides.forEach((_, i) => {
-                const dot = document.createElement("div");
-                dot.classList.add("dot");
-                if (i === 0) dot.classList.add("active");
-                dot.addEventListener("click", () => goToSlide(i));
+                const dot = document.createElement("span");
+                dot.className = i === 0 ? "dot active" : "dot";
+                dot.setAttribute("aria-hidden", "true");
                 dotsContainer.appendChild(dot);
             });
         }
 
-        function goToSlide(index) {
+        function showSlide(index) {
+            if (!slides.length) return;
             slides[currentSlide].classList.remove("active");
-            if (dotsContainer) dotsContainer.children[currentSlide].classList.remove("active");
-            currentSlide = index;
+            if (dotsContainer?.children[currentSlide]) {
+                dotsContainer.children[currentSlide].classList.remove("active");
+            }
+
+            currentSlide = index % slides.length;
             slides[currentSlide].classList.add("active");
-            if (dotsContainer) dotsContainer.children[currentSlide].classList.add("active");
-        }
-
-        function nextSlide() {
-            goToSlide((currentSlide + 1) % slides.length);
-        }
-
-        function previousSlide() {
-            goToSlide((currentSlide - 1 + slides.length) % slides.length);
+            if (dotsContainer?.children[currentSlide]) {
+                dotsContainer.children[currentSlide].classList.add("active");
+            }
         }
 
         function startSlider() {
+            if (slideTimer || slides.length < 2) return;
+            slideTimer = window.setInterval(() => {
+                showSlide((currentSlide + 1) % slides.length);
+            }, 5000);
+        }
+
+        function stopSlider() {
+            if (!slideTimer) return;
             clearInterval(slideTimer);
-            slideTimer = setInterval(nextSlide, 4500);
+            slideTimer = null;
         }
 
-        // Add clear touch-friendly controls without changing the HTML structure.
-        const slider = slides[0].closest('.slider');
-        if (slider) {
-            const controls = document.createElement('div');
-            controls.className = 'slider-controls';
-            controls.innerHTML = `
-                <button type="button" class="slider-arrow slider-prev" aria-label="Previous slide"><i class="fas fa-chevron-left"></i></button>
-                <button type="button" class="slider-arrow slider-next" aria-label="Next slide"><i class="fas fa-chevron-right"></i></button>`;
-            slider.appendChild(controls);
-
-            controls.querySelector('.slider-prev').addEventListener('click', () => {
-                previousSlide();
-                startSlider();
+        // Start only when the slider is near/inside the viewport; stop when it leaves.
+        const sliderObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    // Ask the browser to decode the slideshow images ahead of the next change.
+                    slides.forEach((slide) => {
+                        const img = slide.querySelector("img");
+                        if (img && typeof img.decode === "function") img.decode().catch(() => {});
+                    });
+                    startSlider();
+                } else {
+                    stopSlider();
+                }
             });
-            controls.querySelector('.slider-next').addEventListener('click', () => {
-                nextSlide();
-                startSlider();
-            });
+        }, { rootMargin: "250px 0px", threshold: 0.01 });
 
-            let touchStartX = 0;
-            slider.addEventListener('touchstart', (event) => {
-                touchStartX = event.changedTouches[0].screenX;
-            }, { passive: true });
-            slider.addEventListener('touchend', (event) => {
-                const distance = event.changedTouches[0].screenX - touchStartX;
-                if (Math.abs(distance) < 45) return;
-                distance < 0 ? nextSlide() : previousSlide();
-                startSlider();
-            }, { passive: true });
-        }
-
-        startSlider();
+        sliderObserver.observe(slider);
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) stopSlider();
+        });
     }
 
     // ── MEET THE STUDENTS SLIDESHOW ───────
-    // Slide order: 0 = Palesa Tumane (Property Manager), 1 = Lisa Matu, 2 = Misokuhle Sogiba.
-    // The manager's slide (index 0) is always what plays first — both on page load
-    // and every time the visitor scrolls this section into view.
+    // Automatic-only and paused while off-screen.
     const peopleSlides = document.querySelectorAll(".people-slide");
     const peopleDotsContainer = document.getElementById("people-dots");
-    const peoplePrevBtn = document.getElementById("people-prev");
-    const peopleNextBtn = document.getElementById("people-next");
     const peopleSection = document.getElementById("meet-students");
 
     if (peopleSlides.length > 0) {
         let peopleCurrent = 0;
-        let peopleTimer;
+        let peopleTimer = null;
 
         if (peopleDotsContainer) {
+            peopleDotsContainer.innerHTML = "";
             peopleSlides.forEach((_, i) => {
-                const dot = document.createElement("div");
-                dot.classList.add("dot");
-                if (i === 0) dot.classList.add("active");
-                dot.addEventListener("click", () => {
-                    goToPeopleSlide(i);
-                    resetPeopleTimer();
-                });
+                const dot = document.createElement("span");
+                dot.className = i === 0 ? "dot active" : "dot";
+                dot.setAttribute("aria-hidden", "true");
                 peopleDotsContainer.appendChild(dot);
             });
         }
 
         function goToPeopleSlide(index) {
             peopleSlides[peopleCurrent].classList.remove("active");
-            if (peopleDotsContainer) peopleDotsContainer.children[peopleCurrent].classList.remove("active");
+            if (peopleDotsContainer?.children[peopleCurrent]) {
+                peopleDotsContainer.children[peopleCurrent].classList.remove("active");
+            }
+
             peopleCurrent = (index + peopleSlides.length) % peopleSlides.length;
             peopleSlides[peopleCurrent].classList.add("active");
-            if (peopleDotsContainer) peopleDotsContainer.children[peopleCurrent].classList.add("active");
+            if (peopleDotsContainer?.children[peopleCurrent]) {
+                peopleDotsContainer.children[peopleCurrent].classList.add("active");
+            }
         }
 
-        function resetPeopleTimer() {
-            clearInterval(peopleTimer);
-            peopleTimer = setInterval(() => goToPeopleSlide(peopleCurrent + 1), 4000);
-        }
-
-        if (peoplePrevBtn) {
-            peoplePrevBtn.addEventListener("click", () => {
-                goToPeopleSlide(peopleCurrent - 1);
-                resetPeopleTimer();
-            });
-        }
-
-        if (peopleNextBtn) {
-            peopleNextBtn.addEventListener("click", () => {
+        function startPeopleSlider() {
+            if (peopleTimer || peopleSlides.length < 2) return;
+            peopleTimer = window.setInterval(() => {
                 goToPeopleSlide(peopleCurrent + 1);
-                resetPeopleTimer();
-            });
+            }, 4500);
         }
 
-        resetPeopleTimer();
+        function stopPeopleSlider() {
+            if (!peopleTimer) return;
+            clearInterval(peopleTimer);
+            peopleTimer = null;
+        }
 
-        // Every time the section scrolls into view, jump back to the manager's
-        // slide (index 0) and restart the auto-play timer from there.
         if (peopleSection) {
             const peopleSectionObserver = new IntersectionObserver((entries) => {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
-                        goToPeopleSlide(0);
-                        resetPeopleTimer();
+                        peopleSlides.forEach((slide) => {
+                            const img = slide.querySelector("img");
+                            if (img && typeof img.decode === "function") img.decode().catch(() => {});
+                        });
+                        startPeopleSlider();
+                    } else {
+                        stopPeopleSlider();
                     }
                 });
-            }, { threshold: 0.4 });
+            }, { rootMargin: "200px 0px", threshold: 0.01 });
 
             peopleSectionObserver.observe(peopleSection);
         }

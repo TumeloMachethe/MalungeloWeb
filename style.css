@@ -654,7 +654,7 @@ button:hover {
     position: absolute;
     inset: 0;
     opacity: 0;
-    transition: opacity 1.2s ease;
+    transition: opacity 0.55s ease;
 }
 
 .slide.active {
@@ -673,7 +673,6 @@ button:hover {
     left: 8%;
     color: var(--white);
     background: rgba(15,23,36,0.75);
-    backdrop-filter: blur(8px);
     padding: 28px 32px;
     border-radius: var(--radius);
     max-width: 480px;
@@ -706,7 +705,7 @@ button:hover {
     height: 8px;
     border-radius: 50%;
     background: rgba(255,255,255,0.4);
-    cursor: pointer;
+    cursor: default;
     transition: var(--transition);
 }
 
@@ -714,37 +713,6 @@ button:hover {
     background: var(--gold);
     width: 24px;
     border-radius: 100px;
-}
-
-/* Slider controls are especially useful on touch screens. */
-.slider-controls {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 24px;
-    pointer-events: none;
-    z-index: 11;
-}
-
-.slider-arrow {
-    width: 48px;
-    height: 48px;
-    border: 1px solid rgba(255,255,255,0.38);
-    border-radius: 50%;
-    background: rgba(15,23,36,0.62);
-    color: var(--white);
-    cursor: pointer;
-    pointer-events: auto;
-    font-size: 16px;
-    transition: var(--transition);
-}
-
-.slider-arrow:hover {
-    background: var(--gold-gradient);
-    color: var(--darkest);
-    border-color: transparent;
 }
 
 /* =========================================
@@ -1161,7 +1129,7 @@ button:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 16px;
+    gap: 0;
 }
 
 .people-slides {
@@ -1179,7 +1147,7 @@ button:hover {
     inset: 0;
     opacity: 0;
     transform: scale(1.03);
-    transition: opacity 0.8s ease, transform 0.8s ease;
+    transition: opacity 0.5s ease, transform 0.5s ease;
     pointer-events: none;
 }
 
@@ -1235,29 +1203,6 @@ button:hover {
     color: var(--gold);
 }
 
-.people-arrow {
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-    background: var(--darker);
-    color: var(--gold);
-    border: 1px solid rgba(212,164,55,0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    cursor: pointer;
-    flex-shrink: 0;
-    padding: 0;
-    transition: var(--transition);
-}
-
-.people-arrow:hover {
-    background: var(--gold-gradient);
-    color: var(--darkest);
-    transform: scale(1.08);
-}
-
 .people-dots {
     display: flex;
     justify-content: center;
@@ -1270,7 +1215,7 @@ button:hover {
     height: 8px;
     border-radius: 50%;
     background: rgba(255,255,255,0.3);
-    cursor: pointer;
+    cursor: default;
     transition: var(--transition);
 }
 
@@ -1286,7 +1231,6 @@ body.light-mode .people-section {
 
 @media (max-width: 500px) {
     .people-slides { width: 260px; height: 340px; }
-    .people-arrow { width: 38px; height: 38px; font-size: 14px; }
 }
 
 /* =========================================
@@ -2552,7 +2496,6 @@ body.light-mode .hero-eyebrow {
     justify-content: center;
     padding: 20px;
     background: rgba(4, 8, 16, 0.78);
-    backdrop-filter: blur(8px);
 }
 
 .declaration-modal.is-open { display: flex; }
@@ -3134,22 +3077,11 @@ button,
     }
     .slide-text h2 { font-size: 22px; }
     .slide-text p { font-size: 14px; }
-    .slider-controls { padding: 0 10px; }
-    .slider-arrow { width: 40px; height: 40px; font-size: 14px; }
     .slider-dots { bottom: 18px; }
 
     .people-section { padding: 64px 16px; overflow: hidden; }
     .people-slider { width: 100%; max-width: none; }
     .people-slides { width: min(76vw, 270px); height: 350px; }
-    .people-arrow {
-        position: absolute;
-        z-index: 4;
-        width: 38px;
-        height: 38px;
-        background: rgba(15,23,36,0.88);
-    }
-    .people-arrow.prev { left: 0; }
-    .people-arrow.next { right: 0; }
 
     .form-group input, .form-group select, .form-group textarea { font-size: 16px; }
     .selected-property-message { border-radius: 14px; line-height: 1.4; }
@@ -4147,7 +4079,6 @@ button {
 
     .slide-text h2 { font-size: 20px; }
     .slide-text p { font-size: 12.5px; line-height: 1.45; }
-    .slider-arrow { width: 38px; height: 38px; }
 
     /* People */
     .people-section { overflow: hidden; }
@@ -4166,7 +4097,6 @@ button {
 
     .people-caption { padding: 24px 14px 18px; }
     .people-caption h3 { font-size: 20px; }
-    .people-arrow { width: 40px; height: 40px; }
 
     /* Reviews — one comfortable card at a time. */
     .reviews-section h2 { margin-bottom: 28px; }
