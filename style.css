@@ -4752,3 +4752,55 @@ body.light-mode .accommodation-option:has(input:checked) {
         font-size: 13.5px;
     }
 }
+
+/* =========================================
+   MOBILE SLIDER — FULL IMAGE VISIBILITY FIX
+   Keeps desktop unchanged. On phones, wide slide artwork is fitted
+   inside the slider instead of being cropped by object-fit: cover.
+   ========================================= */
+@media (max-width: 600px) {
+    .slider {
+        height: clamp(260px, 72vw, 420px) !important;
+        min-height: 260px !important;
+        max-height: 420px !important;
+        background: var(--darkest);
+    }
+
+    .slide {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--darkest);
+    }
+
+    .slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain !important;
+        object-position: center center !important;
+    }
+
+    /* Keep the caption compact so it covers less of the artwork. */
+    .slide-text {
+        left: 12px;
+        right: 12px;
+        bottom: 38px;
+        padding: 12px 14px;
+        max-width: calc(100% - 24px);
+        background: rgba(15, 23, 36, 0.82);
+    }
+
+    .slide-text h2 {
+        font-size: 18px;
+        margin-bottom: 5px;
+    }
+
+    .slide-text p {
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
+    .slider-dots {
+        bottom: 12px;
+    }
+}
