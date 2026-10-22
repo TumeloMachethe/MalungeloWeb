@@ -931,3 +931,80 @@ if (applicationForm) {
         applicationForm.submit();
     });
 }
+// =========================================
+// HERO GOLD PARTICLES
+// =========================================
+document.addEventListener("DOMContentLoaded", () => {
+    const canvas = document.getElementById("hero-particles");
+    if (!canvas) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const hero = canvas.parentElement;
+    const ctx = canvas.getContext("2d");
+    let w = 0, h = 0, particles = [], raf = null;
+
+    function makeParticle(randomY) {
+        return {
+            x: Math.random() * w,
+            y: randomY ? Math.random() * h : h + 10,
+            r: 1 + Math.random() * 2.4,            // size
+            vy: 0.15 + Math.random() * 0.45,       // rise speed
+            drift: Math.random() * Math.PI * 2,
+            driftSpeed: 0.004 + Math.random() * 0.01,
+            amp: 0.2 + Math.random() * 0.5,        // sideways sway
+            a: 0.3 + Math.random() * 0.6,          // brightness
+            tw: Math.random() * Math.PI * 2        // twinkle phase
+        };
+    }
+
+    function resize() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        w = hero.clientWidth;
+        h = hero.clientHeight;
+        canvas.width = w * dpr;
+        canvas.height = h * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        const count = w < 600 ? 28 : 60;           // fewer on phones
+        particles = Array.from({ length: count }, () => makeParticle(true));
+    }
+
+    function frame() {
+        ctx.clearRect(0, 0, w, h);
+        ctx.shadowColor = "rgba(240, 207, 122, 0.9)";
+        ctx.shadowBlur = 8;
+
+        for (const p of particles) {
+            p.y -= p.vy;
+            p.drift += p.driftSpeed;
+            p.x += Math.sin(p.drift) * p.amp;
+            p.tw += 0.03;
+
+            if (p.y < -10) Object.assign(p, makeParticle(false));
+
+            const fadeTop = Math.max(0, Math.min(1, p.y / (h * 0.3)));
+            const alpha = p.a * (0.6 + 0.4 * Math.sin(p.tw)) * fadeTop;
+
+            ctx.beginPath();
+            ctx.fillStyle = "rgba(240, 207, 122, " + alpha.toFixed(3) + ")";
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        raf = requestAnimationFrame(frame);
+    }
+
+    function start() { if (!raf) raf = requestAnimationFrame(frame); }
+    function stop()  { if (raf) { cancelAnimationFrame(raf); raf = null; } }
+
+    resize();
+
+    // Only animate while the hero is on screen
+    new IntersectionObserver((entries) => {
+        entries[0].isIntersecting ? start() : stop();
+    }, { threshold: 0.05 }).observe(hero);
+
+    let resizeTimer;
+    window.addEventListener("resize", () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(resize, 200);
+    });
+});

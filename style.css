@@ -252,7 +252,7 @@ nav {
     height: 92vh;
     min-height: 600px;
     position: relative;
-    background: url("graduation.png") center / cover no-repeat;
+    background: url("graduation.jpg") center / cover no-repeat;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -303,7 +303,7 @@ nav {
     align-items: center;
     gap: 16px;
     padding: 0 20px;
-    animation: fadeInUp 1.2s ease forwards;
+
 }
 
 .hero-eyebrow {
@@ -4896,4 +4896,82 @@ body.light-mode.joburg-house .subpage-hero {
     background-image: url("Johannesburg.jpg") !important;
     background-size: cover !important;
     background-position: center !important;
+}
+/* =========================================
+   HERO: 2027 ANNOUNCEMENT + PARTICLES
+   ========================================= */
+
+/* Particle canvas (between the overlay and the text) */
+.hero-particles {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Entrance: each hero element fades and slides up in sequence */
+.hero-text > * {
+    animation: heroRise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+}
+.hero-text > :nth-child(1) { animation-delay: 0.15s; }
+.hero-text > :nth-child(2) { animation-delay: 0.35s; }
+.hero-text > :nth-child(3) { animation-delay: 0.55s; }
+.hero-text > :nth-child(4) { animation-delay: 0.75s; }
+.hero-text > :nth-child(5) { animation-delay: 0.95s; }
+
+@keyframes heroRise {
+    from { opacity: 0; transform: translateY(26px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* "Applications for 2027 are open" pill */
+.hero-announce {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 20px;
+    border: 1px solid rgba(212,164,55,0.55);
+    border-radius: 100px;
+    background: rgba(15,23,36,0.45);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    color: var(--gold-2);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    transition: var(--transition);
+}
+
+.hero-announce:hover {
+    background: var(--gold-gradient);
+    color: var(--darkest);
+    border-color: transparent;
+}
+
+.announce-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 0 4px rgba(212,164,55,0.2);
+}
+
+.hero-announce:hover .announce-dot {
+    background: var(--darkest);
+    box-shadow: 0 0 0 4px rgba(15,23,36,0.2);
+}
+
+@media (max-width: 600px) {
+    .hero-announce { font-size: 13px; padding: 8px 16px; }
+}
+
+@media (max-width: 360px) {
+    .hero-announce { font-size: 12px; padding: 7px 13px; gap: 8px; text-align: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-text > * { animation: none !important; }
+    .hero-particles { display: none; }
 }
