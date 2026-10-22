@@ -17,18 +17,33 @@ document.addEventListener("DOMContentLoaded", () => {
     window.setTimeout(hidePageLoader, 3500);
 
     // ── THEME TOGGLE ──────────────────────
+    // LIGHT MODE IS THE DEFAULT. Dark mode is only used if the visitor
+    // has previously chosen it with the toggle button.
     const toggleBtn = document.getElementById("theme-toggle");
 
-    if (localStorage.getItem("theme") === "light") {
+    let savedTheme = null;
+    try {
+        savedTheme = localStorage.getItem("theme");
+    } catch (err) {
+        savedTheme = null; // storage blocked — fall back to the default
+    }
+
+    if (savedTheme !== "dark") {
         document.body.classList.add("light-mode");
         if (toggleBtn) toggleBtn.innerHTML = '<i class="fas fa-sun"></i>';
+    } else {
+        if (toggleBtn) toggleBtn.innerHTML = '<i class="fas fa-moon"></i>';
     }
 
     if (toggleBtn) {
         toggleBtn.addEventListener("click", () => {
             document.body.classList.toggle("light-mode");
             const isLight = document.body.classList.contains("light-mode");
-            localStorage.setItem("theme", isLight ? "light" : "dark");
+            try {
+                localStorage.setItem("theme", isLight ? "light" : "dark");
+            } catch (err) {
+                // ignore — theme just won't be remembered
+            }
             toggleBtn.innerHTML = isLight
                 ? '<i class="fas fa-sun"></i>'
                 : '<i class="fas fa-moon"></i>';
