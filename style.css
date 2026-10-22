@@ -4887,13 +4887,13 @@ body.light-mode .city-intro { color: var(--dark); }
    JOHANNESBURG PROPERTY PAGE HERO
    ========================================= */
 .joburg-house .subpage-hero {
-    background-image: url("Johannesburg.jpg");
+    background-image: url("johannesburg.jpg");
     background-size: cover;
     background-position: center;
 }
 
 body.light-mode.joburg-house .subpage-hero {
-    background-image: url("Johannesburg.jpg") !important;
+    background-image: url("johannesburg.jpg") !important;
     background-size: cover !important;
     background-position: center !important;
 }
