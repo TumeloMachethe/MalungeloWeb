@@ -4804,3 +4804,96 @@ body.light-mode .accommodation-option:has(input:checked) {
         bottom: 12px;
     }
 }
+
+
+/* =========================================
+   CITY TOGGLE (Port Elizabeth / Johannesburg)
+   ========================================= */
+.city-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin: -20px auto 36px;
+    flex-wrap: wrap;
+}
+
+.city-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 26px 8px 8px;
+    background: rgba(22, 32, 51, 0.6);
+    color: var(--white);
+    border: 1px solid rgba(212,164,55,0.2);
+    border-radius: 100px;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.city-tab img {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--darker);
+}
+
+.city-tab:hover {
+    border-color: rgba(212,164,55,0.6);
+}
+
+.city-tab.active {
+    background: var(--gold-gradient);
+    color: var(--darkest);
+    border-color: transparent;
+    box-shadow: var(--shadow-gold);
+}
+
+.city-intro {
+    max-width: 640px;
+    margin: 0 auto 48px;
+    color: var(--text-muted);
+    font-size: 17px;
+    line-height: 1.6;
+}
+
+.city-panel[hidden] { display: none; }
+
+body.light-mode .city-tab {
+    background: var(--white);
+    color: var(--dark);
+    border-color: rgba(31,41,64,0.12);
+}
+
+body.light-mode .city-tab.active {
+    background: var(--gold-gradient);
+    color: var(--darkest);
+}
+
+body.light-mode .city-intro { color: var(--dark); }
+
+@media (max-width: 600px) {
+    .city-tabs { margin-top: -10px; gap: 10px; }
+    .city-tab { font-size: 14px; padding: 6px 18px 6px 6px; }
+    .city-tab img { width: 36px; height: 36px; }
+    .city-intro { font-size: 15px; margin-bottom: 32px; }
+}
+
+
+/* =========================================
+   JOHANNESBURG PROPERTY PAGE HERO
+   ========================================= */
+.joburg-house .subpage-hero {
+    background-image: url("Johannesburg.jpg");
+    background-size: cover;
+    background-position: center;
+}
+
+body.light-mode.joburg-house .subpage-hero {
+    background-image: url("Johannesburg.jpg") !important;
+    background-size: cover !important;
+    background-position: center !important;
+}
